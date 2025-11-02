@@ -11,40 +11,10 @@ const NumerologyInfoPage = lazy(() => import('./components/NumerologyInfoPage'))
 const ContactPage = lazy(() => import('./components/ContactPage'));
 const TermsOfServicePage = lazy(() => import('./components/TermsOfServicePage'));
 const PrivacyPolicyPage = lazy(() => import('./components/PrivacyPolicyPage'));
+const AboutPage = lazy(() => import('./components/AboutPage'));
 
 
-export type Page = 'home' | 'info' | 'contact' | 'terms' | 'privacy';
-
-const pageToPath: { [key in Page]: string } = {
-  home: '/',
-  info: '/numeroloji-nedir',
-  contact: '/iletisim',
-  terms: '/kullanim-sartlari',
-  privacy: '/gizlilik-politikasi'
-};
-
-const calculatorToPath: { [key in Tab]: string } = {
-  love: '/analiz/ask-uyumu',
-  personal: '/analiz/kisisel-rapor',
-  year: '/analiz/kisisel-yil',
-  career: '/analiz/kariyer-potansiyeli'
-};
-
-const pathTocalculator: { [key: string]: Tab } = {
-  '/analiz/ask-uyumu': 'love',
-  '/analiz/kisisel-rapor': 'personal',
-  '/analiz/kisisel-yil': 'year',
-  '/analiz/kariyer-potansiyeli': 'career'
-};
-
-const pathToPage: { [key: string]: Page } = {
-  '/': 'home',
-  '/numeroloji-nedir': 'info',
-  '/iletisim': 'contact',
-  '/kullanim-sartlari': 'terms',
-  '/gizlilik-politikasi': 'privacy'
-};
-
+export type Page = 'home' | 'info' | 'contact' | 'terms' | 'privacy' | 'about';
 
 const pageMetadata = {
   home: {
@@ -66,6 +36,10 @@ const pageMetadata = {
   privacy: {
     title: 'Gizlilik Politikası | Numeroskop',
     description: 'Numeroskop web sitesinin gizlilik politikası, hangi verileri topladığımızı ve nasıl kullandığımızı öğrenin.'
+  },
+   about: {
+      title: 'Hakkımızda & Metodoloji | Numeroskop',
+      description: 'Numeroskop\'un misyonunu, kullandığımız Pisagorcu numeroloji metodolojisini ve projenin arkasındaki uzmanlık anlayışını öğrenin.'
   },
   calculator: {
     love: {
@@ -99,104 +73,161 @@ const App: React.FC = () => {
   const [scrollToSection, setScrollToSection] = useState<string | null>(null);
 
   useEffect(() => {
-    const handleLocationChange = () => {
-      const path = window.location.pathname;
-
-      if (path.startsWith('/analiz/')) {
-        const tab = pathTocalculator[path];
-        if (tab) {
-          setActiveCalculator(tab);
-          setCurrentPage('home'); 
-        } else {
-           setCurrentPage('home');
-           setActiveCalculator(null);
-        }
-      } else {
-        const page = pathToPage[path];
-        setActiveCalculator(null);
-        setCurrentPage(page || 'home'); 
-      }
-    };
-
-    window.addEventListener('popstate', handleLocationChange);
-    handleLocationChange(); // Initial load
-
-    return () => {
-      window.removeEventListener('popstate', handleLocationChange);
-    };
-  }, []);
-
-  useEffect(() => {
+    // SEO: Sayfa başlığını ve açıklamasını dinamik olarak güncelle
     let meta;
+    let canonicalUrl;
+    let ogUrl;
     if (activeCalculator) {
       meta = pageMetadata.calculator[activeCalculator];
+      canonicalUrl = `https://numeroskop.com.tr/analiz/${activeCalculator}`;
+      ogUrl = canonicalUrl;
     } else {
       meta = pageMetadata[currentPage];
+      canonicalUrl = currentPage === 'home' ? 'https://numeroskop.com.tr' : `https://numeroskop.com.tr/${currentPage === 'info' ? 'numeroloji-nedir' : currentPage}`;
+      ogUrl = canonicalUrl;
     }
     
     if (meta) {
       document.title = meta.title;
+      const descriptionTag = document.getElementById('meta-description');
+      if (descriptionTag) {
+        descriptionTag.setAttribute('content', meta.description);
+      }
 
-      const currentPath = window.location.pathname;
-      const canonicalUrl = `https://numeroskop.com.tr${currentPath === '/' ? '' : currentPath}`;
+      const ogTitleTag = document.getElementById('og-title');
+      if (ogTitleTag) ogTitleTag.setAttribute('content', meta.title);
+      const ogDescriptionTag = document.getElementById('og-description');
+      if (ogDescriptionTag) ogDescriptionTag.setAttribute('content', meta.description);
+      const twitterTitleTag = document.getElementById('twitter-title');
+      if (twitterTitleTag) twitterTitleTag.setAttribute('content', meta.title);
+      const twitterDescriptionTag = document.getElementById('twitter-description');
+      if (twitterDescriptionTag) twitterDescriptionTag.setAttribute('content', meta.description);
+    }
 
-      const setMetaAttribute = (id: string, attribute: string, value: string) => {
-        const element = document.getElementById(id);
-        if (element) {
-          element.setAttribute(attribute, value);
+    // Update Canonical URL
+    const canonicalLink = document.getElementById('canonical-link');
+    if (canonicalLink) {
+        canonicalLink.setAttribute('href', canonicalUrl);
+    }
+    const ogUrlTag = document.getElementById('og-url');
+    if (ogUrlTag) ogUrlTag.setAttribute('content', ogUrl);
+
+
+    // Dynamically inject JSON-LD schema
+    const jsonLdSchemaTag = document.getElementById('json-ld-schema');
+    if (jsonLdSchemaTag) {
+        let schema: any = {};
+        if (currentPage === 'home' && !activeCalculator) {
+            schema = {
+                "@context": "https://schema.org",
+                "@graph": [
+                    {
+                        "@type": "WebSite",
+                        "url": "https://numeroskop.com.tr/",
+                        "name": "Numeroskop",
+                        "description": pageMetadata.home.description,
+                        "potentialAction": {
+                            "@type": "SearchAction",
+                            "target": "https://numeroskop.com.tr/?s={search_term_string}",
+                            "query-input": "required name=search_term_string"
+                        }
+                    },
+                    {
+                        "@context": "https://schema.org",
+                        "@type": "FAQPage",
+                        "mainEntity": [
+                            {
+                                "@type": "Question",
+                                "name": "Yaşam Yolu Sayısı nedir?",
+                                "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "Doğum tarihinizden türetilen bu sayı, hayatınızdaki ana temayı, en büyük dersleri, fırsatları ve zorlukları temsil eden en önemli numerolojik göstergedir. O, sizin kim olduğunuzun ve bu dünyaya ne getirdiğinizin özüdür."
+                                }
+                            },
+                            {
+                                "@type": "Question",
+                                "name": "Kader (İsim) Sayısı nedir?",
+                                "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "Tam isminizdeki harflerin numerolojik değerlerinden hesaplanır. Bu sayı, doğal yeteneklerinizi, potansiyelinizi ve hayatta neyi başarmak için burada olduğunuzu ortaya koyar. Kaderinize giden yolun haritasıdır."
+                                }
+                            },
+                             {
+                                "@type": "Question",
+                                "name": "Ruh Dürtüsü Sayısı nedir?",
+                                "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "İsminizdeki sesli harflerden türetilir ve kalbinizin en derin arzularını, gerçek motivasyonlarınızı ve sizi içten içe neyin mutlu ettiğini gösterir. Bu, ruhunuzun fısıltısıdır."
+                                }
+                            },
+                             {
+                                "@type": "Question",
+                                "name": "Kişilik Sayısı nedir?",
+                                "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "İsminizdeki sessiz harflerin toplamından elde edilir. Dış dünyaya nasıl göründüğünüzü, insanların sizi ilk başta nasıl algıladığını ve kendinizin hangi yönlerini rahatça gösterdiğinizi anlatır. Sizin sosyal maskenizdir."
+                                }
+                            }
+                        ]
+                    }
+                ]
+            };
+        } else {
+            // BreadcrumbList for other pages
+            const pathSegments = [];
+            if (currentPage !== 'home') {
+                pathSegments.push({ name: 'Anasayfa', item: 'https://numeroskop.com.tr/' });
+            }
+            if (activeCalculator) {
+                pathSegments.push({ name: 'Analizler', item: 'https://numeroskop.com.tr/#analizler' }); // Anchor link to analyses section on home
+                pathSegments.push({ name: pageMetadata.calculator[activeCalculator].title.split(' | ')[0], item: canonicalUrl });
+            } else {
+                pathSegments.push({ name: meta.title.split(' | ')[0], item: canonicalUrl });
+            }
+
+            schema = {
+                "@context": "https://schema.org",
+                "@type": "BreadcrumbList",
+                "itemListElement": pathSegments.map((segment, index) => ({
+                    "@type": "ListItem",
+                    "position": index + 1,
+                    "name": segment.name,
+                    "item": segment.item
+                }))
+            };
         }
-      };
-      
-      const setMetaContent = (id: string, content: string) => {
-          setMetaAttribute(id, 'content', content);
-      };
-      
-      setMetaContent('meta-description', meta.description);
-      setMetaAttribute('canonical-link', 'href', canonicalUrl);
-
-      setMetaContent('og-url', canonicalUrl);
-      setMetaContent('og-title', meta.title);
-      setMetaContent('og-description', meta.description);
-      
-      setMetaContent('twitter-title', meta.title);
-      setMetaContent('twitter-description', meta.description);
+        jsonLdSchemaTag.textContent = JSON.stringify(schema, null, 2);
     }
-
   }, [currentPage, activeCalculator]);
-  
-  const navigate = (path: string) => {
-    if (window.location.pathname !== path) {
-      window.history.pushState({}, '', path);
-    }
-    const navEvent = new PopStateEvent('popstate');
-    window.dispatchEvent(navEvent);
-  };
 
   const handleNavigate = (page: Page) => {
-    navigate(pageToPath[page]);
+    setCurrentPage(page);
+    setActiveCalculator(null);
   };
 
   const handleNavigateToCalculators = (tab: Tab) => {
-    navigate(calculatorToPath[tab]);
+    setCurrentPage('home'); 
+    setActiveCalculator(tab);
   };
 
   const handleNavigateToHomeAndScroll = (sectionId: string) => {
-    const isAlreadyHome = window.location.pathname === '/';
-    if (isAlreadyHome) {
+    if (currentPage === 'home' && !activeCalculator) {
       const element = document.getElementById(sectionId);
       element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else {
-      navigate('/');
+      setCurrentPage('home');
+      setActiveCalculator(null);
       setScrollToSection(sectionId);
     }
   };
   
   const handleBackToHome = () => {
-    navigate('/');
+    setActiveCalculator(null);
+    setCurrentPage('home');
   };
 
   useEffect(() => {
-    if (currentPage === 'home' && !activeCalculator && scrollToSection) {
+    if (currentPage === 'home' && scrollToSection) {
       const timer = setTimeout(() => {
         const element = document.getElementById(scrollToSection);
         if (element) {
@@ -208,7 +239,7 @@ const App: React.FC = () => {
     } else if (!activeCalculator && currentPage !== 'home') {
        window.scrollTo(0, 0);
     }
-  }, [currentPage, activeCalculator, scrollToSection]);
+  }, [currentPage, scrollToSection]);
   
   useEffect(() => {
      if (activeCalculator) {
@@ -223,17 +254,19 @@ const App: React.FC = () => {
     }
     switch (currentPage) {
       case 'home':
-        return <HomePage onNavigateToCalculators={handleNavigateToCalculators} />;
+        return <HomePage onNavigateToCalculators={handleNavigateToCalculators} onNavigate={handleNavigate} />;
       case 'info':
-        return <NumerologyInfoPage onNavigateToCalculators={() => handleNavigateToCalculators('personal')} />;
+        return <NumerologyInfoPage onNavigateToCalculators={() => handleNavigateToCalculators('personal')} onNavigate={handleNavigate} />;
       case 'contact':
         return <ContactPage />;
       case 'terms':
         return <TermsOfServicePage />;
       case 'privacy':
         return <PrivacyPolicyPage />;
+      case 'about':
+        return <AboutPage />;
       default:
-        return <HomePage onNavigateToCalculators={handleNavigateToCalculators} />;
+        return <HomePage onNavigateToCalculators={handleNavigateToCalculators} onNavigate={handleNavigate} />;
     }
   };
 

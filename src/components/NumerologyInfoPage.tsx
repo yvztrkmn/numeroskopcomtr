@@ -1,8 +1,17 @@
 import React from 'react';
+import type { Page } from '../App';
 
 interface NumerologyInfoPageProps {
     onNavigateToCalculators: () => void;
+    onNavigate: (page: Page) => void;
 }
+
+const InternalLink: React.FC<{ onClick: () => void; children: React.ReactNode }> = ({ onClick, children }) => (
+    <a href="#" onClick={(e) => { e.preventDefault(); onClick(); }} className="text-primary hover:underline">
+        {children}
+    </a>
+);
+
 
 const InfoCard: React.FC<{ icon: string; title: string; children: React.ReactNode; }> = ({ icon, title, children }) => (
     <div className="bg-input-dark p-6 rounded-lg border border-border-dark">
@@ -10,11 +19,11 @@ const InfoCard: React.FC<{ icon: string; title: string; children: React.ReactNod
             <span className="material-symbols-outlined text-primary text-3xl">{icon}</span>
             <h3 className="text-xl font-bold text-white">{title}</h3>
         </div>
-        <div className="text-white/80 space-y-3">{children}</div>
+        <div className="text-white/80 space-y-3 prose prose-invert max-w-none text-white/80">{children}</div>
     </div>
 );
 
-const NumerologyInfoPage: React.FC<NumerologyInfoPageProps> = ({ onNavigateToCalculators }) => {
+const NumerologyInfoPage: React.FC<NumerologyInfoPageProps> = ({ onNavigateToCalculators, onNavigate }) => {
   return (
     <div className="mx-auto w-full max-w-4xl px-4 py-12 sm:px-6 lg:px-8 animate-fade-in">
       <div className="text-center mb-12">
@@ -50,13 +59,13 @@ const NumerologyInfoPage: React.FC<NumerologyInfoPageProps> = ({ onNavigateToCal
           <h2 className="text-3xl font-bold text-white mb-6 text-center">Temel Numeroloji Kavramları</h2>
           <div className="space-y-4">
              <InfoCard icon="map" title="Yaşam Yolu Sayısı">
-                <p>Doğum tarihinizin (gün, ay, yıl) toplamından elde edilen en önemli sayıdır. Bu sayı, doğuştan getirdiğiniz özellikleri, hayatınızın genel temasını, karşılaşacağınız fırsatları, zorlukları ve öğrenmeniz gereken temel dersleri gösterir. Sizin kişisel yol haritanızdır.</p>
+                <p>Doğum tarihinizin (gün, ay, yıl) toplamından elde edilen en önemli sayıdır. Bu sayı, doğuştan getirdiğiniz özellikleri, hayatınızın genel temasını, karşılaşacağınız fırsatları, zorlukları ve öğrenmeniz gereken temel dersleri gösterir. Sizin kişisel yol haritanızdır. Kendi sayınızı <InternalLink onClick={onNavigateToCalculators}>kişisel rapor</InternalLink> sayfamızda hesaplayabilirsiniz.</p>
              </InfoCard>
              <InfoCard icon="stars" title="Kader (İfade) Sayısı">
                 <p>Doğum isminizdeki tüm harflerin sayısal değerlerinin toplamından hesaplanır. Bu sayı, doğal yeteneklerinizi, potansiyelinizi ve bu dünyada kendinizi nasıl ifade ettiğinizi anlatır. Genellikle kariyer ve başarı ile ilişkilidir; neyi başarmak için burada olduğunuzu gösterir.</p>
              </InfoCard>
              <InfoCard icon="favorite" title="Ruh Dürtüsü (Kalp Arzusu) Sayısı">
-                <p>İsminizdeki sadece sesli harflerin toplamından türetilir. Bu sayı, kalbinizin en derin arzularını, sizi gerçekte neyin motive ettiğini ve ruhunuzun neye özlem duyduğunu ortaya çıkarır. Sizin içsel "neden"inizdir.</p>
+                <p>İsminizdeki sadece sesli harflerin toplamından türetilir. Bu sayı, kalbinizin en derin arzularını, sizi gerçekte neyin motive ettiğini ve ruhunuzun neye özlem duyduğunu ortaya çıkarır. Sizin içsel "neden"inizdir. <InternalLink onClick={onNavigateToCalculators}>Aşk uyumu</InternalLink> analizlerinde önemli bir rol oynar.</p>
              </InfoCard>
              <InfoCard icon="sentiment_satisfied" title="Kişilik Sayısı">
                 <p>İsminizdeki sadece sessiz harflerin toplamından bulunur. Bu, dış dünyaya gösterdiğiniz yüzünüz, insanların sizi ilk başta nasıl algıladığıdır. Sizin sosyal maskeniz olarak düşünülebilir; başkalarının gördüğü ama sizin tam olarak farkında olamayabileceğiniz yönlerinizi temsil eder.</p>
@@ -68,7 +77,7 @@ const NumerologyInfoPage: React.FC<NumerologyInfoPageProps> = ({ onNavigateToCal
             <h2 className="text-3xl font-bold text-white mb-6 text-center">Usta Sayılar: 11, 22 ve 33</h2>
             <div className="bg-card-dark-start rounded-2xl p-6 sm:p-10 border border-primary/30">
                 <p className="text-white/80 text-lg leading-relaxed">
-                    Numerolojide 11, 22 ve 33 sayıları "Usta Sayılar" olarak kabul edilir çünkü daha yüksek bir potansiyel ve daha yoğun bir enerji taşırlar. Bu sayılar, hem büyük bir başarı ve aydınlanma potansiyeli sunar, hem de daha büyük zorluklar ve sorumluluklar getirir. Eğer Yaşam Yolu veya Kader sayınız bu sayılardan biriyse, insanlığa hizmet etme ve büyük projeler gerçekleştirme potansiyeliniz vardır.
+                    Numerolojide 11, 22 ve 33 sayıları "Usta Sayılar" olarak kabul edilir çünkü daha yüksek bir potansiyel ve daha yoğun bir enerji taşırlar. Bu sayılar, hem büyük bir başarı ve aydınlanma potansiyeli sunar, hem de daha büyük zorluklar ve sorumluluklar getirir. Eğer Yaşam Yolu veya Kader sayınız bu sayılardan biriyse, insanlığa hizmet etme ve büyük projeler gerçekleştirme potansiyeliniz vardır. Daha fazla bilgi için <InternalLink onClick={() => onNavigate('home')}>ana sayfamızdaki</InternalLink> temel kavramlar bölümünü inceleyebilirsiniz.
                 </p>
             </div>
         </section>

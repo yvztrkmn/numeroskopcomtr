@@ -173,7 +173,7 @@ const PersonalReportCalculator: React.FC = () => {
                             <input type="date" id="dob" value={dob} onChange={e => setDob(e.target.value)} className="w-full bg-input-dark border-border-dark border rounded-md px-4 py-2 text-white focus:ring-primary focus:border-primary" />
                         </div>
                     </div>
-
+                    
                     {error && <p className="text-red-400 text-sm text-center">{error}</p>}
 
                     <div className="text-center pt-4">
