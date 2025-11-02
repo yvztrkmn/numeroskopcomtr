@@ -1,9 +1,11 @@
 
+
 import React, { useState } from 'react';
 import LoveCompatibilityCalculator from './LoveCompatibilityCalculator';
 import PersonalReportCalculator from './PersonalReportCalculator';
 import PersonalYearCalculator from './PersonalYearCalculator';
 import CareerPotentialCalculator from './CareerPotentialCalculator';
+import { useNavigateToCalculators } from '../hooks/useNavigation';
 
 export type Tab = 'love' | 'personal' | 'year' | 'career';
 
@@ -12,12 +14,23 @@ interface CalculatorPageProps {
     onBack: () => void;
 }
 
+const tabRoutes: Record<Tab, string> = {
+  love: '/analiz/ask-uyumu',
+  personal: '/analiz/kisisel-rapor',
+  year: '/analiz/kisisel-yil',
+  career: '/analiz/kariyer-potansiyeli',
+};
+
 const CalculatorPage: React.FC<CalculatorPageProps> = ({ initialTab, onBack }) => {
   const [activeTab, setActiveTab] = useState<Tab>(initialTab);
+  const navigateToCalculators = useNavigateToCalculators();
 
   const TabButton: React.FC<{ tabId: Tab; children: React.ReactNode }> = ({ tabId, children }) => (
     <button
-      onClick={() => setActiveTab(tabId)}
+      onClick={() => {
+        setActiveTab(tabId);
+        navigateToCalculators(tabId); // Update URL on tab change
+      }}
       className={`px-4 py-2 sm:px-6 sm:py-3 text-xs sm:text-sm font-bold rounded-full transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
         activeTab === tabId
           ? 'bg-primary text-white shadow-lg'

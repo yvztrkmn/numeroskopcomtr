@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import type { CareerAnalysisResult } from '../types';
 import CosmicLoader from './ui/CosmicLoader';
@@ -7,6 +6,8 @@ import RecommendFriend from './RecommendFriend';
 import { formatDateForApi } from '../utils/numerology';
 import { generateCareerAnalysis } from '../services/numerologyEngine';
 import Shimmer from './ui/Shimmer';
+import SocialShareButtons from './SocialShareButtons';
+import RelatedAnalyses from './RelatedAnalyses';
 
 const CareerPotentialCalculator: React.FC = () => {
     const [name, setName] = useState('');
@@ -59,6 +60,9 @@ const CareerPotentialCalculator: React.FC = () => {
 
     const renderResult = () => {
         if (!result) return null;
+        const careerPaths = result.points.find(p => p.title.includes("İdeal Kariyer"))?.description || '';
+        const shareText = `${result.numerologyBreakdown.name} için kariyer potansiyeli raporu hazır! İdeal kariyer yollarım: ${careerPaths}. Sen de kendininkini keşfet: `;
+
 
         return (
             <div className="mt-8 bg-card-dark rounded-xl p-6 sm:p-8 animate-fade-in">
@@ -127,7 +131,9 @@ const CareerPotentialCalculator: React.FC = () => {
                     </div>
                 </div>
 
+                <SocialShareButtons shareText={shareText} />
                 <RecommendFriend />
+                <RelatedAnalyses currentAnalysisType="career" />
 
                 <div className="mt-12">
                     <h3 className="text-2xl font-bold text-white mb-4">{result.seoContent.title}</h3>
@@ -157,7 +163,7 @@ const CareerPotentialCalculator: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label htmlFor="name-career" className="block text-sm font-medium text-white/80 mb-2">İsim Soyisim</label>
-                            <input type="text" id="name-career" value={name} onChange={e => setName(e.target.value)} className="w-full bg-input-dark border-border-dark border rounded-md px-4 py-2 text-white focus:ring-primary focus:border-primary" placeholder="Örn: Elif Yılmaz" />
+                            <input autoFocus type="text" id="name-career" value={name} onChange={e => setName(e.target.value)} className="w-full bg-input-dark border-border-dark border rounded-md px-4 py-2 text-white focus:ring-primary focus:border-primary" placeholder="Örn: Elif Yılmaz" />
                         </div>
                         <div>
                             <label htmlFor="dob-career" className="block text-sm font-medium text-white/80 mb-2">Doğum Tarihi</label>

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import type { LoveAnalysisResult } from '../types';
 import CosmicLoader from './ui/CosmicLoader';
@@ -7,6 +6,8 @@ import RecommendFriend from './RecommendFriend';
 import { formatDateForApi } from '../utils/numerology';
 import { generateLoveAnalysis } from '../services/numerologyEngine';
 import Shimmer from './ui/Shimmer';
+import SocialShareButtons from './SocialShareButtons';
+import RelatedAnalyses from './RelatedAnalyses';
 
 const LoveCompatibilityCalculator: React.FC = () => {
     const [person1Name, setPerson1Name] = useState('');
@@ -71,6 +72,7 @@ const LoveCompatibilityCalculator: React.FC = () => {
         if (!result) return null;
 
         const compatibilityLevel = getCompatibilityLevel(result.compatibilityScore);
+        const shareText = `${result.numerologyBreakdown.person1.name} ve ${result.numerologyBreakdown.person2.name} arasındaki numerolojik aşk uyumu %${result.compatibilityScore}! Sen de kendininkini keşfet: `;
 
         return (
             <div className="mt-8 bg-card-dark rounded-xl p-6 sm:p-8 animate-fade-in">
@@ -147,7 +149,9 @@ const LoveCompatibilityCalculator: React.FC = () => {
                     </div>
                 </div>
 
+                <SocialShareButtons shareText={shareText} />
                 <RecommendFriend />
+                <RelatedAnalyses currentAnalysisType="love" />
 
                 <div className="mt-12">
                     <h3 className="text-2xl font-bold text-white mb-4">{result.seoContent.title}</h3>
@@ -179,7 +183,7 @@ const LoveCompatibilityCalculator: React.FC = () => {
                             <h3 className="text-lg font-semibold text-white">1. Kişi</h3>
                             <div>
                                 <label htmlFor="person1Name" className="block text-sm font-medium text-white/80 mb-2">İsim Soyisim</label>
-                                <input type="text" id="person1Name" value={person1Name} onChange={e => setPerson1Name(e.target.value)} className="w-full bg-input-dark border-border-dark border rounded-md px-4 py-2 text-white focus:ring-primary focus:border-primary" placeholder="Örn: Elif Yılmaz" />
+                                <input autoFocus type="text" id="person1Name" value={person1Name} onChange={e => setPerson1Name(e.target.value)} className="w-full bg-input-dark border-border-dark border rounded-md px-4 py-2 text-white focus:ring-primary focus:border-primary" placeholder="Örn: Elif Yılmaz" />
                             </div>
                             <div>
                                 <label htmlFor="person1Dob" className="block text-sm font-medium text-white/80 mb-2">Doğum Tarihi</label>

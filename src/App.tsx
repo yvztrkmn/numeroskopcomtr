@@ -1,8 +1,9 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect, lazy, Suspense, useCallback } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import type { Tab } from './components/CalculatorPage';
 import LoadingSpinner from './components/ui/LoadingSpinner';
+import { AppContext } from './hooks/useNavigation';
 
 // Lazy load pages for code splitting
 const HomePage = lazy(() => import('./components/HomePage'));
@@ -12,9 +13,10 @@ const ContactPage = lazy(() => import('./components/ContactPage'));
 const TermsOfServicePage = lazy(() => import('./components/TermsOfServicePage'));
 const PrivacyPolicyPage = lazy(() => import('./components/PrivacyPolicyPage'));
 const AboutPage = lazy(() => import('./components/AboutPage'));
+const KvkkCookiePolicyPage = lazy(() => import('./components/KvkkCookiePolicyPage'));
 
 
-export type Page = 'home' | 'info' | 'contact' | 'terms' | 'privacy' | 'about';
+export type Page = 'home' | 'info' | 'contact' | 'terms' | 'privacy' | 'about' | 'kvkk-cookie';
 
 const pageMetadata = {
   home: {
@@ -41,6 +43,10 @@ const pageMetadata = {
       title: 'Hakkımızda & Metodoloji | Numeroskop',
       description: 'Numeroskop\'un misyonunu, kullandığımız Pisagorcu numeroloji metodolojisini ve projenin arkasındaki uzmanlık anlayışını öğrenin.'
   },
+   'kvkk-cookie': {
+      title: 'KVKK ve Çerez Politikası | Numeroskop',
+      description: 'Numeroskop\'un kişisel verilerin korunması ve çerez kullanımı hakkındaki politikalarını detaylıca inceleyin.'
+  },
   calculator: {
     love: {
       title: 'Aşk Uyumu Hesaplama | Numeroskop',
@@ -61,6 +67,37 @@ const pageMetadata = {
   }
 };
 
+// Map Page enum to URL paths for routing
+const pagePaths: Record<Page, string> = {
+  home: '/',
+  info: '/numeroloji-nedir',
+  contact: '/iletisim',
+  terms: '/kullanim-sartlari',
+  privacy: '/gizlilik-politikasi',
+  about: '/hakkimizda',
+  'kvkk-cookie': '/kvkk-cerez-politikasi',
+};
+
+// Map Tab enum to URL paths for calculators
+const tabPaths: Record<Tab, string> = {
+  love: '/analiz/ask-uyumu',
+  personal: '/analiz/kisisel-rapor',
+  year: '/analiz/kisisel-yil',
+  career: '/analiz/kariyer-potansiyeli',
+};
+
+// Reverse mappings for parsing URL to state
+const pathToPage: Record<string, Page> = Object.entries(pagePaths).reduce((acc, [key, value]) => {
+  acc[value] = key as Page;
+  return acc;
+}, {} as Record<string, Page>);
+
+const pathToTab: Record<string, Tab> = Object.entries(tabPaths).reduce((acc, [key, value]) => {
+  acc[value] = key as Tab;
+  return acc;
+}, {} as Record<string, Tab>);
+
+
 const FullPageLoader: React.FC = () => (
     <div className="flex-grow flex items-center justify-center">
         <LoadingSpinner size="lg" />
@@ -72,6 +109,38 @@ const App: React.FC = () => {
   const [activeCalculator, setActiveCalculator] = useState<Tab | null>(null);
   const [scrollToSection, setScrollToSection] = useState<string | null>(null);
 
+  // Function to update state based on current URL
+  const parsePathname = useCallback(() => {
+    const path = window.location.pathname;
+    let newPage: Page = 'home';
+    let newTab: Tab | null = null;
+
+    if (path.startsWith('/analiz/')) {
+      const tabKey = Object.keys(tabPaths).find(key => tabPaths[key as Tab] === path);
+      if (tabKey) {
+        newPage = 'home'; // Calculators are conceptually part of home
+        newTab = tabKey as Tab;
+      }
+    } else {
+      const pageKey = Object.keys(pagePaths).find(key => pagePaths[key as Page] === path);
+      if (pageKey) {
+        newPage = pageKey as Page;
+      }
+    }
+    
+    setCurrentPage(newPage);
+    setActiveCalculator(newTab);
+  }, []);
+
+  useEffect(() => {
+    parsePathname(); // Parse on initial load
+
+    // Listen for browser back/forward buttons
+    window.addEventListener('popstate', parsePathname);
+    return () => window.removeEventListener('popstate', parsePathname);
+  }, [parsePathname]);
+
+
   useEffect(() => {
     // SEO: Sayfa başlığını ve açıklamasını dinamik olarak güncelle
     let meta;
@@ -79,11 +148,11 @@ const App: React.FC = () => {
     let ogUrl;
     if (activeCalculator) {
       meta = pageMetadata.calculator[activeCalculator];
-      canonicalUrl = `https://numeroskop.com.tr/analiz/${activeCalculator}`;
+      canonicalUrl = `https://numeroskop.com.tr${tabPaths[activeCalculator]}`;
       ogUrl = canonicalUrl;
     } else {
       meta = pageMetadata[currentPage];
-      canonicalUrl = currentPage === 'home' ? 'https://numeroskop.com.tr' : `https://numeroskop.com.tr/${currentPage === 'info' ? 'numeroloji-nedir' : currentPage}`;
+      canonicalUrl = `https://numeroskop.com.tr${pagePaths[currentPage]}`;
       ogUrl = canonicalUrl;
     }
     
@@ -136,6 +205,46 @@ const App: React.FC = () => {
                         "@context": "https://schema.org",
                         "@type": "FAQPage",
                         "mainEntity": [
+                            {
+                                "@type": "Question",
+                                "name": "Numeroloji gerçek bir bilim midir?",
+                                "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "Numeroloji, sayıların sembolik anlamlarını inceleyen kadim bir metafizik bilimidir. Modern bilimsel yöntemlerle kanıtlanmamış olsa da, binlerce yıldır kişisel keşif ve rehberlik için kullanılmıştır. Bilimsel bir olgu değil, spiritüel bir araçtır."
+                                }
+                            },
+                            {
+                                "@type": "Question",
+                                "name": "Numeroloji falcılık mıdır?",
+                                "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "Hayır, numeroloji falcılık değildir. Geleceği kesin olarak tahmin etme iddiasında bulunmaz. Bunun yerine, sayıların enerjilerini analiz ederek kişiliğiniz, potansiyeliniz ve yaşam yolunuzdaki eğilimler hakkında içgörüler sunar. Bireysel kararlarınızı desteklemek ve kendinizi daha iyi anlamak için bir rehberdir."
+                                }
+                            },
+                            {
+                                "@type": "Question",
+                                "name": "Hangi numeroloji sistemini kullanıyorsunuz?",
+                                "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "Numeroskop, Batı dünyasında en yaygın ve kabul gören Pisagor (Pythagorean) Numeroloji sistemini temel almaktadır. Bu sistem, harflere 1'den 9'a kadar değerler atar ve doğum tarihi ile isminiz üzerinden yapılan hesaplamalarla analizler sunar."
+                                }
+                            },
+                             {
+                                "@type": "Question",
+                                "name": "Usta Sayılar (11, 22, 33) ne anlama gelir?",
+                                "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "Usta Sayılar, daha yüksek bir potansiyel ve daha büyük yaşam dersleri taşıyan özel sayılar haunting. Normal tek haneli sayılara indirgenmezler ve genellikle büyük bir misyon veya insanlığa hizmet etme potansiyeli ile ilişkilendirilirler. Aynı zamanda bu sayılarla yaşamak daha yoğun zorluklar ve sorumluluklar da getirebilir."
+                                }
+                            },
+                             {
+                                "@type": "Question",
+                                "name": "Numeroloji raporumdaki bilgiler neden önemlidir?",
+                                "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "Raporunuzdaki Yaşam Yolu, Kader, Ruh Dürtüsü ve Kişilik Sayıları gibi temel numerolojik göstergeler, kendinizi daha iyi tanımanızı sağlar. Güçlü yönlerinizi, potansiyelinizi, içsel motivasyonlarınızı ve üzerinde çalışmanız gereken alanları anlamanıza yardımcı olur. Bu bilgiler, hayatınızdaki bilinçli seçimler yapmanız ve en yüksek potansiyelinize ulaşmanız için bir pusula görevi görür."
+                                }
+                            },
                             {
                                 "@type": "Question",
                                 "name": "Yaşam Yolu Sayısı nedir?",
@@ -201,13 +310,29 @@ const App: React.FC = () => {
   }, [currentPage, activeCalculator]);
 
   const handleNavigate = (page: Page) => {
-    setCurrentPage(page);
-    setActiveCalculator(null);
+    const targetPath = pagePaths[page];
+    if (window.location.pathname !== targetPath) {
+      window.history.pushState(null, '', targetPath);
+      setCurrentPage(page);
+      setActiveCalculator(null);
+    } else {
+      // If already on the page, just ensure states are correct
+      setCurrentPage(page);
+      setActiveCalculator(null);
+    }
   };
 
   const handleNavigateToCalculators = (tab: Tab) => {
-    setCurrentPage('home'); 
-    setActiveCalculator(tab);
+    const targetPath = tabPaths[tab];
+    if (window.location.pathname !== targetPath) {
+      window.history.pushState(null, '', targetPath);
+      setCurrentPage('home'); // Calculators are part of the home page structure in terms of layout
+      setActiveCalculator(tab);
+    } else {
+      // If already on the calculator page, just ensure states are correct
+      setActiveCalculator(tab);
+      setCurrentPage('home');
+    }
   };
 
   const handleNavigateToHomeAndScroll = (sectionId: string) => {
@@ -215,6 +340,8 @@ const App: React.FC = () => {
       const element = document.getElementById(sectionId);
       element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else {
+      // Navigate to home page and then set scroll
+      window.history.pushState(null, '', '/');
       setCurrentPage('home');
       setActiveCalculator(null);
       setScrollToSection(sectionId);
@@ -222,6 +349,7 @@ const App: React.FC = () => {
   };
   
   const handleBackToHome = () => {
+    window.history.pushState(null, '', '/');
     setActiveCalculator(null);
     setCurrentPage('home');
   };
@@ -239,7 +367,7 @@ const App: React.FC = () => {
     } else if (!activeCalculator && currentPage !== 'home') {
        window.scrollTo(0, 0);
     }
-  }, [currentPage, scrollToSection]);
+  }, [currentPage, scrollToSection, activeCalculator]);
   
   useEffect(() => {
      if (activeCalculator) {
@@ -256,7 +384,7 @@ const App: React.FC = () => {
       case 'home':
         return <HomePage onNavigateToCalculators={handleNavigateToCalculators} onNavigate={handleNavigate} />;
       case 'info':
-        return <NumerologyInfoPage onNavigateToCalculators={() => handleNavigateToCalculators('personal')} onNavigate={handleNavigate} />;
+        return <NumerologyInfoPage onNavigateToCalculators={handleNavigateToCalculators} onNavigate={handleNavigate} />;
       case 'contact':
         return <ContactPage />;
       case 'terms':
@@ -265,6 +393,8 @@ const App: React.FC = () => {
         return <PrivacyPolicyPage />;
       case 'about':
         return <AboutPage />;
+      case 'kvkk-cookie':
+        return <KvkkCookiePolicyPage />;
       default:
         return <HomePage onNavigateToCalculators={handleNavigateToCalculators} onNavigate={handleNavigate} />;
     }
@@ -274,9 +404,16 @@ const App: React.FC = () => {
     <div className="relative flex min-h-screen w-full flex-col bg-background-dark">
       <Header onNavigate={handleNavigate} currentPage={currentPage} onNavigateToCalculators={handleNavigateToCalculators} activeCalculator={activeCalculator} />
       <main className="flex-grow flex flex-col">
-        <Suspense fallback={<FullPageLoader />}>
-            {renderContent()}
-        </Suspense>
+        <AppContext.Provider value={{
+            // Fix: Referencing the actual handler functions.
+            onNavigate: handleNavigate,
+            onNavigateToCalculators: handleNavigateToCalculators,
+            onNavigateToHomeAndScroll: handleNavigateToHomeAndScroll,
+        }}>
+          <Suspense fallback={<FullPageLoader />}>
+              {renderContent()}
+          </Suspense>
+        </AppContext.Provider>
       </main>
       <Footer onNavigate={handleNavigate} onNavigateToCalculators={handleNavigateToCalculators} onNavigateToHomeAndScroll={handleNavigateToHomeAndScroll} />
     </div>

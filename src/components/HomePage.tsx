@@ -122,6 +122,7 @@ interface HomePageProps {
   onNavigate: (page: Page) => void;
 }
 
+// Fix: Changed 'children' prop type to React.ReactNode to allow JSX elements
 const InternalLink: React.FC<{ onClick: () => void; children: React.ReactNode }> = ({ onClick, children }) => (
     <a href="#" onClick={(e) => { e.preventDefault(); onClick(); }} className="text-primary hover:underline">
         {children}
@@ -149,7 +150,8 @@ const AccordionItem: React.FC<{ icon: string, title: string, children: React.Rea
   );
 };
 
-const JourneyStep: React.FC<{ number: number; text: string }> = ({ number, text }) => (
+// Fix: Changed 'text' prop type to React.ReactNode to allow JSX elements
+const JourneyStep: React.FC<{ number: number; text: React.ReactNode }> = ({ number, text }) => (
     <li className="flex items-start gap-3">
         <div className="flex-shrink-0 size-6 bg-primary/20 text-primary font-bold text-sm flex items-center justify-center rounded-full mt-1">
             {number}
@@ -274,28 +276,93 @@ const DefaultHomePage: React.FC<HomePageProps> = ({ onNavigateToCalculators, onN
             <NumerologyFactsSection />
         </div>
         
-        {/* All other sections */}
+        {/* Numerology Discovery Journeys Section */}
+        <div className="mt-20 sm:mt-28">
+            <div className="text-center mb-12">
+                <h2 className="text-3xl font-bold text-white">Numeroloji Keşif Yolculukları</h2>
+                <p className="mt-3 text-white/60 max-w-xl mx-auto">Bilginizi derinleştirin ve sayıların rehberliğini hayatınızın her alanında kullanın.</p>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Journey Card 1 */}
+                <div className="bg-card-dark rounded-2xl p-8 border border-border-dark h-full">
+                    <div className="flex items-center gap-4 mb-4">
+                        <span className="material-symbols-outlined text-accent text-4xl">route</span>
+                        <h3 className="text-2xl font-bold text-white">5 Adımda Yaşam Yolu Sayını Anla</h3>
+                    </div>
+                    <p className="text-white/70 mb-6">En önemli sayınız olan Yaşam Yolu'nuzun sırlarını çözerek hayat amacınızı ve potansiyelinizi keşfedin.</p>
+                    <ul className="space-y-4">
+                        <JourneyStep number={1} text="Doğum tarihinizi GÜN, AY ve YIL olarak ayırın." />
+                        <JourneyStep number={2} text="Her bir parçayı (gün, ay, yıl) kendi içinde toplayarak tek haneli bir sayıya veya 11, 22, 33 gibi bir usta sayıya indirgeyin." />
+                        <JourneyStep number={3} text="Elde ettiğiniz üç sayıyı birbiriyle toplayın." />
+                        <JourneyStep number={4} text="Bu toplamı da tek haneli bir sayıya veya usta bir sayıya indirgeyin." />
+                        <JourneyStep number={5} text={<>Sonuç, sizin Yaşam Yolu sayınızdır! Sitemizdeki <InternalLink onClick={() => onNavigate('info')}>rehberlerden bu sayının anlamını öğrenin.</InternalLink></>} />
+                    </ul>
+                </div>
+                {/* Journey Card 2 */}
+                <div className="bg-card-dark rounded-2xl p-8 border border-border-dark h-full">
+                    <div className="flex items-center gap-4 mb-4">
+                        <span className="material-symbols-outlined text-accent text-4xl">calendar_month</span>
+                        <h3 className="text-2xl font-bold text-white">Kişisel Yılını Planlama Rehberi</h3>
+                    </div>
+                    <p className="text-white/70 mb-6">İçinde bulunduğunuz yılın enerjisini lehinize çevirin. Fırsatları yakalayın ve zorluklara hazırlıklı olun.</p>
+                    <ul className="space-y-4">
+                        <JourneyStep number={1} text="Doğum GÜNÜNÜZÜ ve AYINIZI toplayıp tek haneye indirgeyin." />
+                        <JourneyStep number={2} text="İçinde bulunduğumuz YILI (örn: 2024) toplayıp tek haneye indirgeyin." />
+                        <JourneyStep number={3} text="Bu iki sonucu birbiriyle toplayın ve tekrar tek haneye indirgeyin." />
+                        <JourneyStep number={4} text="Bu sayı, sizin Kişisel Yıl sayınızdır. Bu yılın temasını belirler." />
+                        <JourneyStep number={5} text={<>Analiz aracımızı kullanarak bu yılın size özel getireceği fırsatları ve dersleri <InternalLink onClick={() => onNavigateToCalculators('year')}>detaylıca öğrenin.</InternalLink></>} />
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-        <div id="numerology-basics" className="mt-20 sm:mt-28 max-w-4xl mx-auto">
-         <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-white">Numerolojinin Temelleri</h2>
-            <p className="mt-3 text-white/60 max-w-xl mx-auto">Hayatınızın kodlarını oluşturan temel sayıların anlamlarını keşfedin.</p>
+        {/* Personal Year Section */}
+        <div className="mt-20 sm:mt-28 grid grid-cols-1 lg:grid-cols-5 gap-8 items-center bg-card-dark rounded-2xl p-8 border border-border-dark">
+            <div className="lg:col-span-2 flex justify-center">
+                <div className="relative">
+                    <span className="material-symbols-outlined text-primary text-9xl">calendar_today</span>
+                    <span className="material-symbols-outlined text-accent/50 text-8xl absolute -top-4 -right-4 -z-10 animate-pulse">model_training</span>
+                </div>
+            </div>
+            <div className="lg:col-span-3">
+                <h2 className="text-3xl font-bold text-white">Kişisel Yıl Sayınızı Keşfedin</h2>
+                <p className="mt-4 text-white/70">
+                    Her yıl, benzersiz bir numerolojik titreşim getirir. Kişisel Yıl sayınız, o yıl boyunca karşılaşacağınız fırsatları, zorlukları ve ana temaları ortaya koyar. Aşk, kariyer veya kişisel gelişim... Bu yılın enerjisini lehinize çevirmek için adımlarınızı bilinçli atın.
+                </p>
+                <div className="mt-6">
+                    <button
+                        onClick={() => onNavigateToCalculators('year')}
+                        className="bg-primary text-white font-bold py-3 px-8 rounded-full hover:bg-primary-light transition-all duration-300 transform hover:scale-105"
+                    >
+                        Kişisel Yıl Analizi Yap
+                    </button>
+                </div>
+            </div>
         </div>
-        <div>
-          <AccordionItem icon="looks_one" title="Yaşam Yolu Sayısı" startOpen={true}>
-             <p>Doğum tarihinizden türetilen bu sayı, hayatınızdaki ana temayı, en büyük dersleri, fırsatları ve zorlukları temsil eden en önemli numerolojik göstergedir. O, sizin kim olduğunuzun ve bu dünyaya ne getirdiğinizin özüdür. Sık sık <InternalLink onClick={() => onNavigate('info')}>Kader Sayısı</InternalLink> ile birlikte yorumlanır.</p>
-          </AccordionItem>
-           <AccordionItem icon="looks_two" title="Kader (İsim) Sayısı">
-            <p>Tam isminizdeki harflerin numerolojik değerlerinden hesaplanır. Bu sayı, doğal yeteneklerinizi, potansiyelinizi ve hayatta neyi başarmak için burada olduğunuzu ortaya koyar. Kaderinize giden yolun haritasıdır. <InternalLink onClick={() => onNavigateToCalculators('career')}>Kariyer analizi</InternalLink> için temel bir göstergedir.</p>
-          </AccordionItem>
-          <AccordionItem icon="looks_3" title="Ruh Dürtüsü Sayısı">
-             <p>İsminizdeki sesli harflerden türetilir ve kalbinizin en derin arzularını, gerçek motivasyonlarınızı ve sizi içten içe neyin mutlu ettiğini gösterir. Bu, ruhunuzun fısıltısıdır ve genellikle <InternalLink onClick={() => onNavigate('info')}>Kişilik Sayısı</InternalLink> ile bir denge oluşturur.</p>
-          </AccordionItem>
-          <AccordionItem icon="looks_4" title="Kişilik Sayısı">
-            <p>İsminizdeki sessiz harflerin toplamından elde edilir. Dış dünyaya nasıl göründüğünüzü, insanların sizi ilk başta nasıl algıladığını ve kendinizin hangi yönlerini rahatça gösterdiğinizi anlatır. Sizin sosyal maskenizdir.</p>
-          </AccordionItem>
+
+        {/* Destiny Number Section */}
+        <div className="mt-8 grid grid-cols-1 lg:grid-cols-5 gap-8 items-center bg-card-dark rounded-2xl p-8 border border-border-dark">
+            <div className="lg:col-span-3">
+                <h2 className="text-3xl font-bold text-white">Kader Sayınızın Gücünü Anlayın</h2>
+                <p className="mt-4 text-white/70">
+                    İsminizin harflerinden türetilen Kader Sayısı, bu hayata getirdiğiniz doğal yetenekleri, potansiyelinizi ve nihai hedeflerinizi sembolize eder. Kariyer yolunuzu şekillendiren ve yaşam amacınıza ulaşmanızda size rehberlik eden bu güçlü sayının sırlarını çözün.
+                </p>
+                <div className="mt-6">
+                    <button
+                        onClick={() => onNavigateToCalculators('career')}
+                        className="bg-primary text-white font-bold py-3 px-8 rounded-full hover:bg-primary-light transition-all duration-300 transform hover:scale-105"
+                    >
+                        Kader Sayını Hesapla
+                    </button>
+                </div>
+            </div>
+            <div className="lg:col-span-2 flex justify-center order-first lg:order-last">
+                 <div className="relative">
+                    <span className="material-symbols-outlined text-primary text-9xl">stars</span>
+                    <span className="material-symbols-outlined text-accent/50 text-8xl absolute -bottom-4 -left-4 -z-10 animate-pulse">psychology</span>
+                </div>
+            </div>
         </div>
-      </div>
     </>
 );
 };
@@ -315,6 +382,40 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigateToCalculators, onNavigate
       ) : (
         <DefaultHomePage onNavigateToCalculators={onNavigateToCalculators} onNavigate={onNavigate} />
       )}
+
+      {/* Common sections for both logged in and out users */}
+      <div id="numerology-basics" className="mt-20 sm:mt-28 max-w-4xl mx-auto">
+         <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-white">Numerolojinin Temelleri</h2>
+            <p className="mt-3 text-white/60 max-w-xl mx-auto">Hayatınızın kodlarını oluşturan temel sayıların anlamlarını keşfedin.</p>
+        </div>
+        <div>
+          <AccordionItem icon="looks_one" title="Yaşam Yolu Sayısı" startOpen={true}>
+             <p>Doğum tarihinizden türetilen bu sayı, hayatınızdaki ana temayı, en büyük dersleri, fırsatları ve zorlukları temsil eden en önemli numerolojik göstergedir. O, sizin kim olduğunuzun ve bu dünyaya ne getirdiğinizin özüdür. Sık sık <InternalLink onClick={() => onNavigate('info')}>Kader Sayısı</InternalLink> ile birlikte yorumlanır.</p>
+          </AccordionItem>
+           <AccordionItem icon="looks_two" title="Kader (İsim) Sayısı">
+            <p>Tam isminizdeki harflerin numerolojik değerlerinden hesaplanır. Bu sayı, doğal yeteneklerinizi, potansiyelinizi ve hayatta neyi başarmak için burada olduğunuzu ortaya koyar. Kaderinize giden yolun haritasıdır. <InternalLink onClick={() => onNavigateToCalculators('career')}>Kariyer analizi</InternalLink> için temel bir göstergedir.</p>
+          </AccordionItem>
+          <AccordionItem icon="looks_3" title="Ruh Dürtüsü Sayısı">
+             <p>İsminizdeki sesli harflerden türetilir ve kalbinizin en derin arzularını, gerçek motivasyonlarınızı ve sizi içten içe neyin mutlu ettiğini gösterir. Bu, ruhunuzun fısıltısıdır ve genellikle <InternalLink onClick={() => onNavigate('info')}>Kişilik Sayısı</InternalLink> ile bir denge oluşturur.</p>
+          </AccordionItem>
+          <AccordionItem icon="looks_4" title="Kişilik Sayısı">
+            <p>İsminizdeki sessiz harflerin toplamından elde edilir. Dış dünyaya nasıl göründüğünüzü, insanların sizi ilk başta nasıl algıladığını ve kendinizin hangi yönlerini rahatça gösterdiğinizi anlatır. Sizin sosyal maskenizdir.</p>
+          </AccordionItem>
+        </div>
+        <div className="mt-12">
+            <h3 className="text-2xl font-bold text-white text-center mb-8">Sayıların Anlamları (1-9)</h3>
+            <AccordionItem icon="rocket_launch" title="Sayı 1: Lider"><p>1 sayısı öncülük, bağımsızlık, yenilik ve başlangıçlarla ilişkilidir. Bu enerji, kişinin kendi yolunu çizme, liderlik etme ve yeni fikirlere öncülük etme arzusunu temsil eder. Güçlü bir irade ve kararlılıkla hedeflerine ulaşır.</p></AccordionItem>
+            <AccordionItem icon="handshake" title="Sayı 2: Diplomat"><p>2 sayısı işbirliği, denge, uyum ve duyarlılık demektir. Bu titreşim, ilişkilerde barışı ve dengeyi arar. Sabırlı, anlayışlı ve diplomatik bir doğaya sahiptir. Başkalarıyla çalışmakta ve ortaklık kurmakta başarılıdır.</p></AccordionItem>
+            <AccordionItem icon="campaign" title="Sayı 3: İletişimci"><p>3 sayısı yaratıcılık, kendini ifade etme, sosyallik ve iyimserlikle doludur. Sanatsal yetenekler, güçlü iletişim becerileri ve neşeli bir kişilikle kendini gösterir. Hayata pozitif bir bakış açısıyla yaklaşır.</p></AccordionItem>
+            <AccordionItem icon="foundation" title="Sayı 4: Mimar"><p>4 sayısı disiplin, düzen, istikrar ve sıkı çalışmayı temsil eder. Bu enerji, sağlam temeller atmak, planlı ve programlı hareket etmekle ilgilidir. Güvenilir, pratik ve sorumluluk sahibidir.</p></AccordionItem>
+            <AccordionItem icon="explore" title="Sayı 5: Maceracı"><p>5 sayısı özgürlük, değişim, macera ve çok yönlülük enerjisi taşır. Rutinden hoşlanmaz, yeni deneyimlere ve heyecanlara açıktır. Uyum sağlama yeteneği yüksektir ve sürekli hareket halindedir.</p></AccordionItem>
+            <AccordionItem icon="health_and_safety" title="Sayı 6: Koruyucu"><p>6 sayısı sorumluluk, aile, sevgi ve hizmetle rezonans eder. Bu titreşim, evi ve sevdiklerini koruma, onlara destek olma arzusunu taşır. Şefkatli, adil ve yardımsever bir yapıya sahiptir.</p></AccordionItem>
+            <AccordionItem icon="psychology" title="Sayı 7: Mistik"><p>7 sayısı içsel bilgelik, analiz, maneviyat ve araştırma ile ilişkilidir. Bu enerji, hayatın derin anlamlarını arar ve yalnız kalarak düşünmekten hoşlanır. Sezgisel, analitik ve gizemli bir doğası vardır.</p></AccordionItem>
+            <AccordionItem icon="trending_up" title="Sayı 8: Güç Sahibi"><p>8 sayısı güç, başarı, materyal dünya ve otoriteyi simgeler. Bu titreşim, büyük hedeflere ulaşma, finansal başarı ve yönetme becerisiyle ilgilidir. Hırslı, kararlı ve iş dünyasında başarılıdır.</p></AccordionItem>
+            <AccordionItem icon="volunteer_activism" title="Sayı 9: Hümanist"><p>9 sayısı tamamlanma, evrensel sevgi, fedakarlık ve bilgelik demektir. Bu enerji, insanlığa hizmet etme ve dünyayı daha iyi bir yer yapma arzusu taşır. Anlayışlı, cömert ve idealist bir yapıya sahiptir.</p></AccordionItem>
+        </div>
+      </div>
 
        {/* Final CTA */}
         <div className="mt-20 sm:mt-28 bg-card-dark-start rounded-2xl p-8 sm:p-12 text-center">

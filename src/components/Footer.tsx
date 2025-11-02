@@ -13,7 +13,7 @@ interface FooterProps {
 }
 
 const FooterLink: React.FC<{ onClick: () => void; children: React.ReactNode }> = ({ onClick, children }) => (
-  <a onClick={onClick} className="text-white/60 transition-colors hover:text-primary cursor-pointer">
+  <a href="#" onClick={(e) => { e.preventDefault(); onClick(); }} className="text-white/60 transition-colors hover:text-primary cursor-pointer">
     {children}
   </a>
 );
@@ -65,6 +65,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigate, onNavigateToCalculators, on
               <FooterLink onClick={() => onNavigate('contact')}>İletişim</FooterLink>
               <FooterLink onClick={() => onNavigate('terms')}>Kullanım Şartları</FooterLink>
               <FooterLink onClick={() => onNavigate('privacy')}>Gizlilik Politikası</FooterLink>
+              <FooterLink onClick={() => onNavigate('kvkk-cookie')}>KVKK ve Çerez Politikası</FooterLink>
             </div>
           </div>
 

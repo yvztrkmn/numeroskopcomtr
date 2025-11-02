@@ -1,4 +1,3 @@
-
 // "Analizlerim" (My Analyses) özelliği ve buna bağlı olan yerel depolama (localStorage)
 // işlevselliği, kullanıcı talebi doğrultusunda tamamen kaldırılmıştır. Bu dosya,
 // olası import hatalarını önlemek amacıyla boş olarak korunmaktadır.
