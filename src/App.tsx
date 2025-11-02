@@ -16,6 +16,37 @@ const PrivacyPolicyPage = lazy(() => import('./components/PrivacyPolicyPage'));
 
 export type Page = 'home' | 'info' | 'contact' | 'terms' | 'privacy';
 
+const pageToPath: { [key in Page]: string } = {
+  home: '/',
+  info: '/numeroloji-nedir',
+  contact: '/iletisim',
+  terms: '/kullanim-sartlari',
+  privacy: '/gizlilik-politikasi'
+};
+
+const calculatorToPath: { [key in Tab]: string } = {
+  love: '/analiz/ask-uyumu',
+  personal: '/analiz/kisisel-rapor',
+  year: '/analiz/kisisel-yil',
+  career: '/analiz/kariyer-potansiyeli'
+};
+
+const pathTocalculator: { [key: string]: Tab } = {
+  '/analiz/ask-uyumu': 'love',
+  '/analiz/kisisel-rapor': 'personal',
+  '/analiz/kisisel-yil': 'year',
+  '/analiz/kariyer-potensiyeli': 'career'
+};
+
+const pathToPage: { [key: string]: Page } = {
+  '/': 'home',
+  '/numeroloji-nedir': 'info',
+  '/iletisim': 'contact',
+  '/kullanim-sartlari': 'terms',
+  '/gizlilik-politikasi': 'privacy'
+};
+
+
 const pageMetadata = {
   home: {
     title: 'Numeroskop | Ücretsiz Numeroloji Analizi - Aşk, Kariyer, Kişilik Raporu',
@@ -69,7 +100,34 @@ const App: React.FC = () => {
   const [scrollToSection, setScrollToSection] = useState<string | null>(null);
 
   useEffect(() => {
-    // SEO: Sayfa başlığını ve açıklamasını dinamik olarak güncelle
+    const handleLocationChange = () => {
+      const path = window.location.pathname;
+
+      if (path.startsWith('/analiz/')) {
+        const tab = pathTocalculator[path];
+        if (tab) {
+          setActiveCalculator(tab);
+          setCurrentPage('home'); 
+        } else {
+           setCurrentPage('home');
+           setActiveCalculator(null);
+        }
+      } else {
+        const page = pathToPage[path];
+        setActiveCalculator(null);
+        setCurrentPage(page || 'home'); 
+      }
+    };
+
+    window.addEventListener('popstate', handleLocationChange);
+    handleLocationChange(); // Initial load
+
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+    };
+  }, []);
+
+  useEffect(() => {
     let meta;
     if (activeCalculator) {
       meta = pageMetadata.calculator[activeCalculator];
@@ -79,42 +137,67 @@ const App: React.FC = () => {
     
     if (meta) {
       document.title = meta.title;
-      const descriptionTag = document.querySelector('meta[name="description"]');
-      if (descriptionTag) {
-        descriptionTag.setAttribute('content', meta.description);
-      }
+
+      const currentPath = window.location.pathname;
+      const canonicalUrl = `https://numeroskop.com.tr${currentPath === '/' ? '' : currentPath}`;
+
+      const setMetaAttribute = (id: string, attribute: string, value: string) => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.setAttribute(attribute, value);
+        }
+      };
+      
+      const setMetaContent = (id: string, content: string) => {
+          setMetaAttribute(id, 'content', content);
+      };
+      
+      setMetaContent('meta-description', meta.description);
+      setMetaAttribute('canonical-link', 'href', canonicalUrl);
+
+      setMetaContent('og-url', canonicalUrl);
+      setMetaContent('og-title', meta.title);
+      setMetaContent('og-description', meta.description);
+      
+      setMetaContent('twitter-title', meta.title);
+      setMetaContent('twitter-description', meta.description);
     }
 
   }, [currentPage, activeCalculator]);
+  
+  const navigate = (path: string) => {
+    if (window.location.pathname !== path) {
+      window.history.pushState({}, '', path);
+    }
+    const navEvent = new PopStateEvent('popstate');
+    window.dispatchEvent(navEvent);
+  };
 
   const handleNavigate = (page: Page) => {
-    setCurrentPage(page);
-    setActiveCalculator(null);
+    navigate(pageToPath[page]);
   };
 
   const handleNavigateToCalculators = (tab: Tab) => {
-    setCurrentPage('home'); 
-    setActiveCalculator(tab);
+    navigate(calculatorToPath[tab]);
   };
 
   const handleNavigateToHomeAndScroll = (sectionId: string) => {
-    if (currentPage === 'home' && !activeCalculator) {
+    const isAlreadyHome = window.location.pathname === '/';
+    if (isAlreadyHome) {
       const element = document.getElementById(sectionId);
       element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else {
-      setCurrentPage('home');
-      setActiveCalculator(null);
+      navigate('/');
       setScrollToSection(sectionId);
     }
   };
   
   const handleBackToHome = () => {
-    setActiveCalculator(null);
-    setCurrentPage('home');
+    navigate('/');
   };
 
   useEffect(() => {
-    if (currentPage === 'home' && scrollToSection) {
+    if (currentPage === 'home' && !activeCalculator && scrollToSection) {
       const timer = setTimeout(() => {
         const element = document.getElementById(scrollToSection);
         if (element) {
@@ -126,7 +209,7 @@ const App: React.FC = () => {
     } else if (!activeCalculator && currentPage !== 'home') {
        window.scrollTo(0, 0);
     }
-  }, [currentPage, scrollToSection]);
+  }, [currentPage, activeCalculator, scrollToSection]);
   
   useEffect(() => {
      if (activeCalculator) {

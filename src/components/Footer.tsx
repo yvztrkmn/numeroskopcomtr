@@ -13,8 +13,15 @@ interface FooterProps {
   onNavigateToHomeAndScroll: (sectionId: string) => void;
 }
 
-const FooterLink: React.FC<{ onClick: () => void; children: React.ReactNode }> = ({ onClick, children }) => (
-  <a onClick={onClick} className="text-white/60 transition-colors hover:text-primary cursor-pointer">
+const FooterLink: React.FC<{ href: string; onClick: () => void; children: React.ReactNode }> = ({ href, onClick, children }) => (
+  <a 
+    href={href} 
+    onClick={(e) => {
+      e.preventDefault();
+      onClick();
+    }} 
+    className="text-white/60 transition-colors hover:text-primary cursor-pointer"
+  >
     {children}
   </a>
 );
@@ -32,14 +39,14 @@ const Footer: React.FC<FooterProps> = ({ onNavigate, onNavigateToCalculators, on
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
           {/* Column 1: Brand */}
           <div className="col-span-2 lg:col-span-2">
-            <div className="flex items-center gap-3 cursor-pointer" onClick={() => onNavigate('home')}>
+            <a href="/" onClick={(e) => { e.preventDefault(); onNavigate('home');}} className="flex items-center gap-3 cursor-pointer">
               <div className="text-primary size-7">
                 <StarIcon />
               </div>
               <h1 className="text-white text-xl font-bold leading-tight tracking-[-0.015em]">
                 Numeroskop
               </h1>
-            </div>
+            </a>
             <p className="mt-4 text-white/60 max-w-xs">
               İsminizin ve doğum tarihinizin ardındaki sırları çözerek kaderinizin kodlarını keşfedin.
             </p>
@@ -49,10 +56,10 @@ const Footer: React.FC<FooterProps> = ({ onNavigate, onNavigateToCalculators, on
           <div className="text-sm">
             <h3 className="font-semibold text-white mb-4">Analizler</h3>
             <div className="flex flex-col space-y-3">
-              <FooterLink onClick={() => onNavigateToCalculators('love')}>Aşk Uyumu</FooterLink>
-              <FooterLink onClick={() => onNavigateToCalculators('personal')}>Kişisel Rapor</FooterLink>
-              <FooterLink onClick={() => onNavigateToCalculators('year')}>Kişisel Yıl Analizi</FooterLink>
-              <FooterLink onClick={() => onNavigateToCalculators('career')}>Kariyer Potansiyeli</FooterLink>
+              <FooterLink href="/analiz/ask-uyumu" onClick={() => onNavigateToCalculators('love')}>Aşk Uyumu</FooterLink>
+              <FooterLink href="/analiz/kisisel-rapor" onClick={() => onNavigateToCalculators('personal')}>Kişisel Rapor</FooterLink>
+              <FooterLink href="/analiz/kisisel-yil" onClick={() => onNavigateToCalculators('year')}>Kişisel Yıl Analizi</FooterLink>
+              <FooterLink href="/analiz/kariyer-potansiyeli" onClick={() => onNavigateToCalculators('career')}>Kariyer Potensiyeli</FooterLink>
             </div>
           </div>
 
@@ -60,11 +67,11 @@ const Footer: React.FC<FooterProps> = ({ onNavigate, onNavigateToCalculators, on
           <div className="text-sm">
             <h3 className="font-semibold text-white mb-4">Şirket</h3>
             <div className="flex flex-col space-y-3">
-              <FooterLink onClick={() => onNavigate('info')}>Numeroloji Nedir?</FooterLink>
-              <FooterLink onClick={() => onNavigateToHomeAndScroll('numerology-basics')}>Temel Kavramlar</FooterLink>
-              <FooterLink onClick={() => onNavigate('contact')}>İletişim</FooterLink>
-              <FooterLink onClick={() => onNavigate('terms')}>Kullanım Şartları</FooterLink>
-              <FooterLink onClick={() => onNavigate('privacy')}>Gizlilik Politikası</FooterLink>
+              <FooterLink href="/numeroloji-nedir" onClick={() => onNavigate('info')}>Numeroloji Nedir?</FooterLink>
+              <FooterLink href="/#numerology-basics" onClick={() => onNavigateToHomeAndScroll('numerology-basics')}>Temel Kavramlar</FooterLink>
+              <FooterLink href="/iletisim" onClick={() => onNavigate('contact')}>İletişim</FooterLink>
+              <FooterLink href="/kullanim-sartlari" onClick={() => onNavigate('terms')}>Kullanım Şartları</FooterLink>
+              <FooterLink href="/gizlilik-politikasi" onClick={() => onNavigate('privacy')}>Gizlilik Politikası</FooterLink>
             </div>
           </div>
 

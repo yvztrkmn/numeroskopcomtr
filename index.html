@@ -15,22 +15,22 @@
     <!-- SEO: Odaklanmış Anahtar Kelimeler -->
     <meta name="keywords" content="numeroloji, numeroskop, ücretsiz numeroloji analizi, aşk uyumu, kariyer potansiyeli, yaşam yolu sayısı, kader sayısı, isim analizi, doğum tarihi" />
     
-    <!-- SEO: Canonical URL -->
-    <link rel="canonical" href="https://numeroskop.com.tr" />
+    <!-- SEO: Canonical URL (Dynamically updated) -->
+    <link id="canonical-link" rel="canonical" href="https://numeroskop.com.tr" />
 
-    <!-- SEO: Open Graph / Facebook Meta Etiketleri -->
-    <meta property="og:title" content="Numeroskop | Ücretsiz Numeroloji Analizi" />
-    <meta property="og:description" content="İsminizin ve doğum tarihinizin numerolojik sırlarını çözün. Ücretsiz analiz ile aşk uyumu, kariyer potansiyeli ve karakterinizin derinliklerini keşfedin. Kaderinizin kodları burada." />
+    <!-- SEO: Open Graph / Facebook Meta Etiketleri (Dynamically updated) -->
+    <meta id="og-title" property="og:title" content="Numeroskop | Ücretsiz Numeroloji Analizi" />
+    <meta id="og-description" property="og:description" content="İsminizin ve doğum tarihinizin numerolojik sırlarını çözün. Ücretsiz analiz ile aşk uyumu, kariyer potansiyeli ve karakterinizin derinliklerini keşfedin. Kaderinizin kodları burada." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://numeroskop.com.tr" />
+    <meta id="og-url" property="og:url" content="https://numeroskop.com.tr" />
     <meta property="og:image" content="https://numeroskop.com.tr/social-share-image.png" />
     <meta property="og:site_name" content="Numeroskop" />
     <meta property="og:locale" content="tr_TR" />
 
-    <!-- SEO: Twitter Card Meta Etiketleri -->
+    <!-- SEO: Twitter Card Meta Etiketleri (Dynamically updated) -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Numeroskop | Ücretsiz Numeroloji Analizi" />
-    <meta name="twitter:description" content="İsminizin ve doğum tarihinizin numerolojik sırlarını çözün. Ücretsiz analiz ile aşk uyumu, kariyer potansiyeli ve karakterinizin derinliklerini keşfedin. Kaderinizin kodları burada." />
+    <meta id="twitter-title" name="twitter:title" content="Numeroskop | Ücretsiz Numeroloji Analizi" />
+    <meta id="twitter-description" name="twitter:description" content="İsminizin ve doğum tarihinizin numerolojik sırlarını çözün. Ücretsiz analiz ile aşk uyumu, kariyer potansiyeli ve karakterinizin derinliklerini keşfedin. Kaderinizin kodları burada." />
     <meta name="twitter:image" content="https://numeroskop.com.tr/social-share-image.png" />
 
     <!-- Diğer Meta Etiketler -->
@@ -136,6 +136,15 @@
     "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.0"
   }
 }
+</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-D92FRXHHC0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-D92FRXHHC0');
 </script>
 </head>
   <body class="bg-background-dark font-display text-white antialiased">

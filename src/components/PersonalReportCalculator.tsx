@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import type { PersonalAnalysisResult } from '../types';
 import CosmicLoader from './ui/CosmicLoader';
@@ -32,7 +31,6 @@ const PersonalReportCalculator: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [result, setResult] = useState<PersonalAnalysisResult | null>(null);
-    const [saveInfo, setSaveInfo] = useState(true);
 
     useEffect(() => {
         const user = getUser();
@@ -66,9 +64,7 @@ const PersonalReportCalculator: React.FC = () => {
 
             if (analysisResult) {
                 setResult(analysisResult);
-                if (saveInfo) {
-                    saveUser({ name, dob: formattedDob });
-                }
+                saveUser({ name, dob: formattedDob });
 
                  analysisResult.getSummary().then(summary => {
                     setResult(prevResult => {
@@ -177,24 +173,10 @@ const PersonalReportCalculator: React.FC = () => {
                             <input type="date" id="dob" value={dob} onChange={e => setDob(e.target.value)} className="w-full bg-input-dark border-border-dark border rounded-md px-4 py-2 text-white focus:ring-primary focus:border-primary" />
                         </div>
                     </div>
-                    
-                    <div className="flex items-center justify-center pt-2">
-                        <input
-                            type="checkbox"
-                            id="saveInfo"
-                            checked={saveInfo}
-                            onChange={(e) => setSaveInfo(e.target.checked)}
-                            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary bg-input-dark"
-                        />
-                        <label htmlFor="saveInfo" className="ml-2 block text-sm text-white/70">
-                            Bilgilerimi sonraki analizler için kaydet.
-                        </label>
-                    </div>
-
 
                     {error && <p className="text-red-400 text-sm text-center">{error}</p>}
 
-                    <div className="text-center pt-2">
+                    <div className="text-center pt-4">
                         <button type="submit" className="bg-primary text-white font-bold py-3 px-8 rounded-full hover:bg-primary-dark transition-all duration-300 disabled:bg-primary/50 disabled:cursor-not-allowed flex items-center justify-center mx-auto min-w-[180px]">
                             Rapor Oluştur
                         </button>

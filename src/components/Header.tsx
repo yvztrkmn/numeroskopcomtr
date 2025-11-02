@@ -62,19 +62,20 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, onNavigateToCa
      return `${baseClasses} ${activeClasses}`;
   }
 
-  const analysesLinks: { tab: Tab, label: string }[] = [
-      { tab: 'love', label: 'Aşk Uyumu' },
-      { tab: 'personal', label: 'Kişisel Rapor' },
-      { tab: 'year', label: 'Kişisel Yıl Analizi' },
-      { tab: 'career', label: 'Kariyer Potensiyeli' },
+  const analysesLinks: { tab: Tab, label: string, path: string }[] = [
+      { tab: 'love', label: 'Aşk Uyumu', path: '/analiz/ask-uyumu' },
+      { tab: 'personal', label: 'Kişisel Rapor', path: '/analiz/kisisel-rapor' },
+      { tab: 'year', label: 'Kişisel Yıl Analizi', path: '/analiz/kisisel-yil' },
+      { tab: 'career', label: 'Kariyer Potensiyeli', path: '/analiz/kariyer-potansiyeli' },
   ];
 
   return (
     <>
       <header className="sticky top-0 z-50 flex items-center justify-between px-4 sm:px-10 lg:px-20 py-4 bg-background-dark/80 backdrop-blur-lg border-b border-solid border-border-dark shadow-md shadow-black/25">
-        <div 
+        <a 
+          href="/"
           className="flex items-center gap-3 cursor-pointer group" 
-          onClick={() => handleLinkClick('home')}
+          onClick={(e) => { e.preventDefault(); handleLinkClick('home'); }}
           aria-label="Anasayfaya Git"
         >
           <div className="text-primary size-7 transition-transform duration-300 group-hover:rotate-[20deg]">
@@ -83,12 +84,12 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, onNavigateToCa
           <h1 className="text-white text-xl font-bold leading-tight tracking-[-0.015em]">
             Numeroskop
           </h1>
-        </div>
+        </a>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex flex-1 justify-end">
           <div className="flex items-center gap-9">
-            <a href="#" className={getLinkClasses('home')} onClick={(e) => { e.preventDefault(); handleLinkClick('home'); }}>
+            <a href="/" className={getLinkClasses('home')} onClick={(e) => { e.preventDefault(); handleLinkClick('home'); }}>
               Anasayfa
               <span className={`absolute bottom-0 left-0 block h-0.5 w-full bg-primary transition-transform duration-300 ease-out origin-center ${currentPage === 'home' && !activeCalculator ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}></span>
             </a>
@@ -107,7 +108,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, onNavigateToCa
                       {analysesLinks.map(link => (
                           <a 
                             key={link.tab}
-                            href="#" 
+                            href={link.path} 
                             onClick={(e) => { e.preventDefault(); handleCalcLinkClick(link.tab); }} 
                             className={`block px-4 py-2 text-sm font-medium transition-colors ${activeCalculator === link.tab ? 'text-primary' : 'text-white/80 hover:bg-input-dark hover:text-white'}`}
                           >
@@ -120,11 +121,11 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, onNavigateToCa
               )}
             </div>
 
-            <a href="#" className={getLinkClasses('info')} onClick={(e) => { e.preventDefault(); handleLinkClick('info'); }}>
+            <a href="/numeroloji-nedir" className={getLinkClasses('info')} onClick={(e) => { e.preventDefault(); handleLinkClick('info'); }}>
               Numeroloji Nedir?
               <span className={`absolute bottom-0 left-0 block h-0.5 w-full bg-primary transition-transform duration-300 ease-out origin-center ${currentPage === 'info' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}></span>
             </a>
-            <a href="#" className={getLinkClasses('contact')} onClick={(e) => { e.preventDefault(); handleLinkClick('contact'); }}>
+            <a href="/iletisim" className={getLinkClasses('contact')} onClick={(e) => { e.preventDefault(); handleLinkClick('contact'); }}>
               İletişim
               <span className={`absolute bottom-0 left-0 block h-0.5 w-full bg-primary transition-transform duration-300 ease-out origin-center ${currentPage === 'contact' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}></span>
             </a>
@@ -161,13 +162,13 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, onNavigateToCa
           className={`absolute top-0 right-0 h-full w-2/3 max-w-xs bg-background-dark shadow-2xl transform transition-transform duration-300 ease-in-out ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
         >
           <div className="flex flex-col gap-8 pt-28 px-4">
-            <a href="#" className={getMobileLinkClasses('home')} onClick={(e) => { e.preventDefault(); handleLinkClick('home'); }}>
+            <a href="/" className={getMobileLinkClasses('home')} onClick={(e) => { e.preventDefault(); handleLinkClick('home'); }}>
               Anasayfa
             </a>
-            <a href="#" className={getMobileLinkClasses('info')} onClick={(e) => { e.preventDefault(); handleLinkClick('info'); }}>
+            <a href="/numeroloji-nedir" className={getMobileLinkClasses('info')} onClick={(e) => { e.preventDefault(); handleLinkClick('info'); }}>
               Numeroloji Nedir?
             </a>
-            <a href="#" className={getMobileLinkClasses('contact')} onClick={(e) => { e.preventDefault(); handleLinkClick('contact'); }}>
+            <a href="/iletisim" className={getMobileLinkClasses('contact')} onClick={(e) => { e.preventDefault(); handleLinkClick('contact'); }}>
               İletişim
             </a>
 
@@ -177,7 +178,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, onNavigateToCa
                     {analysesLinks.map(link => (
                          <a 
                            key={link.tab}
-                           href="#" 
+                           href={link.path} 
                            onClick={(e) => { e.preventDefault(); handleCalcLinkClick(link.tab); }} 
                            className={getMobileCalcLinkClasses(link.tab)}
                          >
