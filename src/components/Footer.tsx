@@ -1,4 +1,3 @@
-
 import React from 'react';
 import StarIcon from './icons/StarIcon';
 import InstagramIcon from './icons/InstagramIcon';

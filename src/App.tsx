@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -35,7 +34,7 @@ const pathTocalculator: { [key: string]: Tab } = {
   '/analiz/ask-uyumu': 'love',
   '/analiz/kisisel-rapor': 'personal',
   '/analiz/kisisel-yil': 'year',
-  '/analiz/kariyer-potensiyeli': 'career'
+  '/analiz/kariyer-potansiyeli': 'career'
 };
 
 const pathToPage: { [key: string]: Page } = {
