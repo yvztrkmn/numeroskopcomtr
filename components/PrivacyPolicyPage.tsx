@@ -30,7 +30,7 @@ const PrivacyPolicyPage: React.FC = () => {
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold text-white">3. Bilgilerinizi Nasıl Kullanıyoruz?</h2>
+          <h2 className="2xl font-bold text-white">3. Bilgilerinizi Nasıl Kullanıyoruz?</h2>
           <p>Topladığımız bilgileri aşağıdaki amaçlar için kullanırız:</p>
           <ul>
             <li>Size kişiselleştirilmiş numeroloji analizleri ve raporları sunmak.</li>
@@ -40,35 +40,35 @@ const PrivacyPolicyPage: React.FC = () => {
         </section>
         
         <section>
-          <h2 className="text-2xl font-bold text-white">4. Bilgilerin Paylaşımı</h2>
+          <h2 className="2xl font-bold text-white">4. Bilgilerin Paylaşımı</h2>
           <p>
             Kişisel bilgilerinizi (isim, doğum tarihi vb.) kesinlikle üçüncü taraflarla satmıyor, kiralamıyor veya paylaşmıyoruz. Analiz oluşturma işlemi, girdiğiniz bilgilerin Google Gemini API'sine güvenli bir şekilde gönderilmesini içerir. Bu işlem sırasında verileriniz geçici olarak işlenir ancak Google tarafından hizmet sunumu dışında bir amaçla saklanmaz veya kullanılmaz. Cihazınızda yerel olarak saklanan veriler, sizin tarafınızdan açıkça paylaşılmadığı sürece tarayıcınızdan ayrılmaz.
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold text-white">5. Veri Güvenliği ve Saklama</h2>
+          <h2 className="2xl font-bold text-white">5. Veri Güvenliği ve Saklama</h2>
           <p>
             Profil bilgileriniz, tarayıcınızın yerel depolama (LocalStorage) teknolojisi kullanılarak doğrudan sizin cihazınızda saklanır. Bu verilerin güvenliği, cihazınızın genel güvenliğine bağlıdır. Sitemiz, bu verileri kendi sunucularında saklamaz. Tarayıcınızın önbelleğini veya site verilerini temizleyerek bu bilgileri dilediğiniz zaman kalıcı olarak silebilirsiniz.
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold text-white">6. Haklarınız</h2>
+          <h2 className="2xl font-bold text-white">6. Haklarınız</h2>
           <p>
             Cihazınızda saklanan tüm veriler üzerinde tam kontrole sahipsiniz. Tarayıcı ayarlarınızdan site verilerini temizleyerek tüm kayıtlı bilgilerinizi silebilirsiniz.
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold text-white">7. Politikadaki Değişiklikler</h2>
+          <h2 className="2xl font-bold text-white">7. Politikadaki Değişiklikler</h2>
           <p>
             Bu Gizlilik Politikası'nı zaman zaman güncelleme hakkımızı saklı tutarız. Değişiklikler bu sayfada yayınlandığı andan itibaren geçerli olacaktır.
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold text-white">8. İletişim</h2>
+          <h2 className="2xl font-bold text-white">8. İletişim</h2>
           <p>
             Bu Gizlilik Politikası ile ilgili herhangi bir sorunuz varsa, lütfen <a href="mailto:destek@numeroskop.com.tr" className="text-primary hover:underline">destek@numeroskop.com.tr</a> adresinden bizimle iletişime geçin.
           </p>

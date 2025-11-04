@@ -1,6 +1,6 @@
 import React, { useState, useEffect, lazy, Suspense, useCallback } from 'react';
 import Header from './components/Header';
-import Footer from './components/Footer';
+import { Footer } from './components/Footer';
 import type { Tab } from './components/CalculatorPage';
 import LoadingSpinner from './components/ui/LoadingSpinner';
 import { AppContext } from './hooks/useNavigation';

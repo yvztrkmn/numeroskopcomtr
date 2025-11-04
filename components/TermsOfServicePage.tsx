@@ -49,14 +49,14 @@ const TermsOfServicePage: React.FC = () => {
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold text-white">6. Şartlarda Değişiklikler</h2>
+          <h2 className="2xl font-bold text-white">6. Şartlarda Değişiklikler</h2>
           <p>
             Bu Kullanım Şartları'nı zaman zaman güncelleme hakkımızı saklı tutarız. Değişiklikler bu sayfada yayınlandığı andan itibaren geçerli olacaktır. Hizmet'i kullanmaya devam etmeniz, güncellenmiş şartları kabul ettiğiniz anlamına gelir.
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold text-white">7. İletişim</h2>
+          <h2 className="2xl font-bold text-white">7. İletişim</h2>
           <p>
             Bu Kullanım Şartları ile ilgili herhangi bir sorunuz varsa, lütfen <a href="mailto:destek@numeroskop.com.tr" className="text-primary hover:underline">destek@numeroskop.com.tr</a> adresinden bizimle iletişime geçin.
           </p>

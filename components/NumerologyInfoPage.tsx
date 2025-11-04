@@ -55,10 +55,10 @@ const NumerologyInfoPage: React.FC<NumerologyInfoPageProps> = ({ onNavigateToCal
                 <p>Tam isminizdeki harflerin numerolojik değerlerinden hesaplanır. Bu sayı, doğal yeteneklerinizi, potansiyelinizi ve hayatta neyi başarmak için burada olduğunuzu ortaya koyar. Kaderinize giden yolun haritasıdır.</p>
             </AccordionItem>
             <AccordionItem icon="looks_3" title="Ruh Dürtüsü Sayısı">
-                <p>İsminizdeki sesli harflerden türetilir ve kalbinizin en derin arzularını, gerçek motivasyonlarınızı ve sizi içten içe neyin mutlu ettiğini gösterir. Bu, ruhunuzun fısıltısıdır.</p>
+                <p>İsminizdeki sadece sesli harflerin toplamından türetilir ve kalbinizin en derin arzularını, gerçek motivasyonlarınızı ve sizi içten içe neyin mutlu ettiğini gösterir. Bu, ruhunuzun fısıltısıdır.</p>
             </AccordionItem>
              <AccordionItem icon="looks_4" title="Kişilik Sayısı">
-                <p>İsminizdeki sessiz harflerin toplamından elde edilir. Dış dünyaya nasıl göründüğünüzü, insanların sizi ilk başta nasıl algıladığını ve kendinizin hangi yönlerini rahatça gösterdiğinizi anlatır. Sizin sosyal maskenizdir.</p>
+                <p>İsminizdeki sadece sessiz harflerin toplamından elde edilir. Dış dünyaya nasıl göründüğünüzü, insanların sizi ilk başta nasıl algıladığını ve kendinizin hangi yönlerini rahatça gösterdiğinizi anlatır. Sizin sosyal maskenizdir.</p>
             </AccordionItem>
           </div>
         </section>

@@ -24,7 +24,8 @@ const SocialIcon: React.FC<{ href: string; children: React.ReactNode }> = ({ hre
     </a>
 )
 
-const Footer: React.FC<FooterProps> = ({ onNavigate, onNavigateToCalculators, onNavigateToHomeAndScroll }) => {
+// Fix: Changed to a named export to resolve the "no default export" error.
+export const Footer: React.FC<FooterProps> = ({ onNavigate, onNavigateToCalculators, onNavigateToHomeAndScroll }) => {
   return (
     <footer className="bg-black/20 mt-12 border-t border-border-dark">
       <div className="mx-auto max-w-7xl px-4 sm:px-10 lg:px-20 pt-16 pb-8">
@@ -92,5 +93,3 @@ const Footer: React.FC<FooterProps> = ({ onNavigate, onNavigateToCalculators, on
     </footer>
   );
 };
-
-export default Footer;
