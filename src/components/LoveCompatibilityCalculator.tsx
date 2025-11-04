@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import type { LoveAnalysisResult } from '../types';
+
+import React, { useState, useEffect } from 'react';
+import type { LoveAnalysisResult, NumerologyDetail, TextContentGetter } from '../types'; // Import TextContentGetter
 import CosmicLoader from './ui/CosmicLoader';
 import CircularProgress from './ui/CircularProgress';
 import RecommendFriend from './RecommendFriend';
@@ -8,6 +9,65 @@ import { generateLoveAnalysis } from '../services/numerologyEngine';
 import Shimmer from './ui/Shimmer';
 import SocialShareButtons from './SocialShareButtons';
 import RelatedAnalyses from './RelatedAnalyses';
+
+// New sub-component for NumerologyDetail with expandable insight
+const DetailCardWithInsight: React.FC<{ detail: NumerologyDetail; personName: string }> = ({ detail, personName }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [insightText, setInsightText] = useState<string | null>(null);
+    const [isLoadingInsight, setIsLoadingInsight] = useState(false);
+
+    useEffect(() => {
+        if (isExpanded && !insightText && detail.getDetailedInsight) {
+            setIsLoadingInsight(true);
+            detail.getDetailedInsight().then(text => {
+                setInsightText(text);
+                setIsLoadingInsight(false);
+            }).catch(error => {
+                console.error("Error fetching detailed insight:", error);
+                setInsightText('Detaylı bilgi alınamadı.');
+                setIsLoadingInsight(false);
+            });
+        }
+    }, [isExpanded, insightText, detail.getDetailedInsight]);
+
+    return (
+        <div className="bg-input-dark p-4 rounded-lg border border-border-dark flex flex-col h-full">
+            <div className="flex justify-between items-center">
+                <p className="font-semibold text-white">{detail.name}</p>
+                <span className="font-bold text-2xl text-accent">{detail.value}</span>
+            </div>
+            <p className="text-sm text-white/70 mt-2">{detail.description}</p>
+            {detail.compatibilityImpact && (
+                <p className="text-sm text-primary/90 mt-3 border-t border-border-dark pt-3">
+                    <span className="font-bold">İlişkiye Etkisi:</span> {detail.compatibilityImpact}
+                </p>
+            )}
+
+            {detail.getDetailedInsight && (
+                <div className="mt-4 pt-4 border-t border-border-dark">
+                    <button
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className="flex items-center justify-between w-full text-primary hover:text-primary-light transition-colors text-sm font-semibold"
+                        aria-expanded={isExpanded}
+                        aria-controls={`insight-${personName}-${detail.name.replace(/\s/g, '-')}`}
+                    >
+                        Daha Fazla Bilgi
+                        <span className={`material-symbols-outlined text-base transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>expand_more</span>
+                    </button>
+                    {isExpanded && (
+                        <div id={`insight-${personName}-${detail.name.replace(/\s/g, '-')}`} className="mt-3 bg-background-dark p-3 rounded-md animate-fade-in-down">
+                            {isLoadingInsight ? (
+                                <Shimmer className="h-20 w-full" />
+                            ) : (
+                                <p className="text-xs text-white/70 prose prose-invert max-w-none whitespace-pre-wrap">{insightText || 'Yükleniyor...'}</p>
+                            )}
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+};
 
 const LoveCompatibilityCalculator: React.FC = () => {
     const [person1Name, setPerson1Name] = useState('');
@@ -112,18 +172,7 @@ const LoveCompatibilityCalculator: React.FC = () => {
                         <h3 className="text-xl font-bold text-white mb-4 text-center">{result.numerologyBreakdown.person1.name} Numeroloji Dökümü</h3>
                         <div className="space-y-4">
                             {result.numerologyBreakdown.person1.details.map((detail, index) => (
-                                <div key={index} className="bg-input-dark p-4 rounded-lg border border-border-dark">
-                                    <div className="flex justify-between items-center">
-                                        <p className="font-semibold text-white">{detail.name}</p>
-                                        <span className="font-bold text-2xl text-accent">{detail.value}</span>
-                                    </div>
-                                    <p className="text-sm text-white/70 mt-2">{detail.description}</p>
-                                    {detail.compatibilityImpact && (
-                                        <p className="text-sm text-primary/90 mt-3 border-t border-border-dark pt-3">
-                                            <span className="font-bold">İlişkiye Etkisi:</span> {detail.compatibilityImpact}
-                                        </p>
-                                    )}
-                                </div>
+                                <DetailCardWithInsight key={index} detail={detail} personName={result.numerologyBreakdown.person1.name} />
                             ))}
                         </div>
                     </div>
@@ -132,18 +181,7 @@ const LoveCompatibilityCalculator: React.FC = () => {
                         <h3 className="text-xl font-bold text-white mb-4 text-center">{result.numerologyBreakdown.person2.name} Numeroloji Dökümü</h3>
                          <div className="space-y-4">
                             {result.numerologyBreakdown.person2.details.map((detail, index) => (
-                               <div key={index} className="bg-input-dark p-4 rounded-lg border border-border-dark">
-                                    <div className="flex justify-between items-center">
-                                        <p className="font-semibold text-white">{detail.name}</p>
-                                        <span className="font-bold text-2xl text-accent">{detail.value}</span>
-                                    </div>
-                                    <p className="text-sm text-white/70 mt-2">{detail.description}</p>
-                                    {detail.compatibilityImpact && (
-                                        <p className="text-sm text-primary/90 mt-3 border-t border-border-dark pt-3">
-                                            <span className="font-bold">İlişkiye Etkisi:</span> {detail.compatibilityImpact}
-                                        </p>
-                                    )}
-                                </div>
+                               <DetailCardWithInsight key={index} detail={detail} personName={result.numerologyBreakdown.person2.name} />
                             ))}
                         </div>
                     </div>

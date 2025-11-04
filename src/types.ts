@@ -4,6 +4,7 @@ export interface NumerologyDetail {
   value: number | string;
   description: string;
   compatibilityImpact?: string;
+  getDetailedInsight?: TextContentGetter; // New field for AI-generated detailed insights
 }
 
 export interface NumerologyBreakdown {
@@ -27,14 +28,14 @@ export interface SeoSection {
   sections: SeoContentSection[];
 }
 
-// A function that returns a promise for the summary string
-type SummaryGetter = () => Promise<string>;
+// A function that returns a promise for text content (summary, detailed insight, etc.)
+export type TextContentGetter = () => Promise<string>;
 
 export interface LoveAnalysisResult {
   compatibilityScore: number;
   title: string;
   summary: string; // Will hold the summary text
-  getSummary: SummaryGetter; // The async function to fetch the summary
+  getSummary: TextContentGetter; // The async function to fetch the summary
   points: AnalysisPoint[];
   numerologyBreakdown: {
     person1: NumerologyBreakdown;
@@ -45,7 +46,7 @@ export interface LoveAnalysisResult {
 
 export interface PersonalAnalysisResult {
   summary: string;
-  getSummary: SummaryGetter;
+  getSummary: TextContentGetter;
   points: AnalysisPoint[];
   numerologyBreakdown: NumerologyBreakdown;
   seoContent: SeoSection;
@@ -63,7 +64,7 @@ export interface PersonalYearResult {
   theme: string;
   personalYearNumber: number;
   summary:string;
-  getSummary: SummaryGetter;
+  getSummary: TextContentGetter;
   points: AnalysisPoint[];
   numberBreakdown: PersonalYearNumberBreakdown[];
   seoContent: SeoSection;
@@ -77,7 +78,7 @@ export interface CareerPitfall {
 }
 export interface CareerAnalysisResult {
   summary: string;
-  getSummary: SummaryGetter;
+  getSummary: TextContentGetter;
   points: AnalysisPoint[];
   careerPitfalls: CareerPitfall[];
   numerologyBreakdown: NumerologyBreakdown;

@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import type { PersonalAnalysisResult } from '../types';
+import type { PersonalAnalysisResult, NumerologyDetail } from '../types';
 import CosmicLoader from './ui/CosmicLoader';
 import { saveUser, getUser } from '../services/userService';
 import RecommendFriend from './RecommendFriend';
@@ -10,21 +11,72 @@ import { lifePathInterpretations } from '../services/numerologyData';
 import SocialShareButtons from './SocialShareButtons';
 import RelatedAnalyses from './RelatedAnalyses';
 
-const DetailCard: React.FC<{ icon: string, name: string, value: string | number, theme: string, description: string }> = ({ icon, name, value, theme, description }) => (
-    <div className="bg-input-dark p-5 rounded-lg border border-border-dark flex flex-col h-full">
-        <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-primary text-3xl">{icon}</span>
-                <h4 className="font-bold text-lg text-white">{name}</h4>
+// Updated DetailCard to handle expandable insight
+const DetailCard: React.FC<{ 
+    icon: string, 
+    name: string, 
+    value: string | number, 
+    theme: string, 
+    description: string,
+    getDetailedInsight?: () => Promise<string> // New prop
+}> = ({ icon, name, value, theme, description, getDetailedInsight }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [insightText, setInsightText] = useState<string | null>(null);
+    const [isLoadingInsight, setIsLoadingInsight] = useState(false);
+
+    useEffect(() => {
+        if (isExpanded && !insightText && getDetailedInsight) {
+            setIsLoadingInsight(true);
+            getDetailedInsight().then(text => {
+                setInsightText(text);
+                setIsLoadingInsight(false);
+            }).catch(error => {
+                console.error("Error fetching detailed insight:", error);
+                setInsightText('Detaylı bilgi alınamadı.');
+                setIsLoadingInsight(false);
+            });
+        }
+    }, [isExpanded, insightText, getDetailedInsight]);
+
+    return (
+        <div className="bg-input-dark p-5 rounded-lg border border-border-dark flex flex-col h-full">
+            <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                    <span className="material-symbols-outlined text-primary text-3xl">{icon}</span>
+                    <h4 className="font-bold text-lg text-white">{name}</h4>
+                </div>
+                <div className="bg-primary/10 border-2 border-primary text-primary text-3xl font-bold rounded-full size-12 flex items-center justify-center flex-shrink-0">
+                    <span>{value}</span>
+                </div>
             </div>
-            <div className="bg-primary/10 border-2 border-primary text-primary text-3xl font-bold rounded-full size-12 flex items-center justify-center flex-shrink-0">
-                <span>{value}</span>
-            </div>
+            <p className="font-semibold text-accent mb-2">{theme}</p>
+            <p className="text-sm text-white/80 leading-relaxed" style={{ whiteSpace: 'pre-wrap' }}>{description}</p>
+
+            {getDetailedInsight && (
+                <div className="mt-4 pt-4 border-t border-border-dark">
+                    <button
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className="flex items-center justify-between w-full text-primary hover:text-primary-light transition-colors text-sm font-semibold"
+                        aria-expanded={isExpanded}
+                        aria-controls={`insight-${name.replace(/\s/g, '-')}`}
+                    >
+                        Daha Fazla Bilgi
+                        <span className={`material-symbols-outlined text-base transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>expand_more</span>
+                    </button>
+                    {isExpanded && (
+                        <div id={`insight-${name.replace(/\s/g, '-')}`} className="mt-3 bg-background-dark p-3 rounded-md animate-fade-in-down">
+                            {isLoadingInsight ? (
+                                <Shimmer className="h-20 w-full" />
+                            ) : (
+                                <p className="text-xs text-white/70 prose prose-invert max-w-none whitespace-pre-wrap">{insightText || 'Yükleniyor...'}</p>
+                            )}
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
-        <p className="font-semibold text-accent mb-2">{theme}</p>
-        <p className="text-sm text-white/80 leading-relaxed" style={{ whiteSpace: 'pre-wrap' }}>{description}</p>
-    </div>
-);
+    );
+};
 
 
 const PersonalReportCalculator: React.FC = () => {
@@ -135,6 +187,7 @@ const PersonalReportCalculator: React.FC = () => {
                                 value={detail.value}
                                 theme={lifePathInterpretations[Number(detail.value)]?.title || 'Özel Tema'}
                                 description={detail.description}
+                                getDetailedInsight={detail.getDetailedInsight} // Pass the new prop
                             />
                         ))}
                     </div>

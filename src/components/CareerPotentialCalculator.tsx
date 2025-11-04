@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import type { CareerAnalysisResult } from '../types';
+
+import React, { useState, useEffect } from 'react';
+import type { CareerAnalysisResult, NumerologyDetail, TextContentGetter } from '../types'; // Import TextContentGetter
 import CosmicLoader from './ui/CosmicLoader';
 import NumerologyChart from './NumerologyChart';
 import RecommendFriend from './RecommendFriend';
@@ -8,6 +9,60 @@ import { generateCareerAnalysis } from '../services/numerologyEngine';
 import Shimmer from './ui/Shimmer';
 import SocialShareButtons from './SocialShareButtons';
 import RelatedAnalyses from './RelatedAnalyses';
+
+// New sub-component for NumerologyDetail with expandable insight
+const DetailCardWithInsight: React.FC<{ detail: NumerologyDetail; personName: string }> = ({ detail, personName }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [insightText, setInsightText] = useState<string | null>(null);
+    const [isLoadingInsight, setIsLoadingInsight] = useState(false);
+
+    useEffect(() => {
+        if (isExpanded && !insightText && detail.getDetailedInsight) {
+            setIsLoadingInsight(true);
+            detail.getDetailedInsight().then(text => {
+                setInsightText(text);
+                setIsLoadingInsight(false);
+            }).catch(error => {
+                console.error("Error fetching detailed insight:", error);
+                setInsightText('Detaylı bilgi alınamadı.');
+                setIsLoadingInsight(false);
+            });
+        }
+    }, [isExpanded, insightText, detail.getDetailedInsight]);
+
+    return (
+        <div className="bg-input-dark p-4 rounded-md flex flex-col h-full">
+            <div className="flex justify-between items-center">
+                <p className="font-semibold text-white">{detail.name}</p>
+                <span className="font-bold text-2xl text-accent">{detail.value}</span>
+            </div>
+            <p className="text-sm text-white/70 mt-2" style={{ whiteSpace: 'pre-wrap' }}>{detail.description}</p>
+            
+            {detail.getDetailedInsight && (
+                <div className="mt-4 pt-4 border-t border-border-dark">
+                    <button
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className="flex items-center justify-between w-full text-primary hover:text-primary-light transition-colors text-sm font-semibold"
+                        aria-expanded={isExpanded}
+                        aria-controls={`insight-${personName}-${detail.name.replace(/\s/g, '-')}`}
+                    >
+                        Daha Fazla Bilgi
+                        <span className={`material-symbols-outlined text-base transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>expand_more</span>
+                    </button>
+                    {isExpanded && (
+                        <div id={`insight-${personName}-${detail.name.replace(/\s/g, '-')}`} className="mt-3 bg-background-dark p-3 rounded-md animate-fade-in-down">
+                            {isLoadingInsight ? (
+                                <Shimmer className="h-20 w-full" />
+                            ) : (
+                                <p className="text-xs text-white/70 prose prose-invert max-w-none whitespace-pre-wrap">{insightText || 'Yükleniyor...'}</p>
+                            )}
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+};
 
 const CareerPotentialCalculator: React.FC = () => {
     const [name, setName] = useState('');
@@ -120,13 +175,7 @@ const CareerPotentialCalculator: React.FC = () => {
                     <h3 className="text-xl font-bold text-white mb-4 text-center">{result.numerologyBreakdown.name} Numeroloji Dökümü</h3>
                     <div className="grid grid-cols-1 gap-4">
                         {result.numerologyBreakdown.details.map((detail, index) => (
-                            <div key={index} className="bg-input-dark p-4 rounded-md">
-                                <div className="flex justify-between items-center">
-                                     <p className="font-semibold text-white">{detail.name}</p>
-                                     <span className="font-bold text-2xl text-accent">{detail.value}</span>
-                                </div>
-                                <p className="text-sm text-white/70 mt-2" style={{whiteSpace: 'pre-wrap'}}>{detail.description}</p>
-                            </div>
+                            <DetailCardWithInsight key={index} detail={detail} personName={result.numerologyBreakdown.name} />
                         ))}
                     </div>
                 </div>

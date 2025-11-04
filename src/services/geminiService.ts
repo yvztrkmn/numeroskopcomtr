@@ -1,4 +1,5 @@
 
+
 import { GoogleGenAI, Type } from "@google/genai";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -18,6 +19,17 @@ const summarySchema = {
         summary: { type: Type.STRING, description: "A 2-4 sentence personalized summary in Turkish, weaving together the provided numerological insights." },
     },
     required: ['summary'],
+};
+
+const detailedInsightSchema = {
+    type: Type.OBJECT,
+    properties: {
+        insight: {
+            type: Type.STRING,
+            description: "A 2-3 paragraph detailed insight in Turkish about the numerological number, its core meaning, and how it interacts with other key numbers in the chart, in the tone of an expert numerologist."
+        },
+    },
+    required: ['insight'],
 };
 
 
@@ -72,3 +84,27 @@ export const generatePersonalizedSummary = async (name: string, analysisType: st
      const result = await generateAndParse<{ summary: string }>(prompt, summarySchema);
     return result ? result.summary : 'Analiziniz hazırlandı, özet yüklenemedi.';
 }
+
+export const generateDetailedInsight = async (
+    userName: string,
+    analysisType: string, // e.g., 'Kişisel Rapor' or 'Aşk Uyumu'
+    numberType: string, // e.g., 'Yaşam Yolu Sayısı' or 'Kader Sayısı'
+    numberValue: number,
+    contextNumbers: { name: string, value: number }[] // e.g., [{name: 'Kader Sayısı', value: 5}]
+): Promise<string | null> => {
+    const contextPrompt = contextNumbers.map(cn => `${cn.name} (${cn.value})`).join(', ');
+    const prompt = `
+    Act as an expert numerologist. You are providing a detailed insight for ${userName} regarding their ${numberType}.
+    The overall analysis type is "${analysisType}".
+    Their ${numberType} is ${numberValue}.
+    Other significant numbers in their chart include: ${contextPrompt}.
+
+    Please write a 2-3 paragraph detailed analysis in Turkish. Explain the core meaning of ${numberValue} for their ${numberType}.
+    Crucially, describe how this ${numberType}'s energy interacts with the other significant numbers mentioned, highlighting both supportive aspects and potential challenges within the context of a numerology chart.
+    The tone should be insightful, empowering, and reflective of a seasoned numerologist.
+    
+    The output must be a JSON object with the detailed insight in the 'insight' field.
+    `;
+    const result = await generateAndParse<{ insight: string }>(prompt, detailedInsightSchema);
+    return result ? result.insight : 'Detaylı bilgi yüklenemedi.';
+};
